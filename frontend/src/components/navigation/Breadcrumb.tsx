@@ -5,10 +5,6 @@ import type { Crumb } from '@/types'
 
 interface BreadcrumbProps {
   items: Crumb[]
-  /**
-   * `trail` — full path, long trails collapse their middle.
-   * `back`  — only the parent as a back link (compact screens).
-   */
   variant?: 'trail' | 'back'
   className?: string
 }

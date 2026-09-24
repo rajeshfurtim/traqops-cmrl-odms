@@ -22,10 +22,9 @@ export const router = createBrowserRouter([
     path: '/',
     element: <AppShell />,
     errorElement: <RouteErrorPage />,
-    handle: handle({ crumb: { label: 'Home', to: '/dashboard' } }),
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: 'dashboard', element: <DashboardPage />, handle: handle({ title: 'Home' }) },
+      { path: 'dashboard', element: <DashboardPage />, handle: handle({ title: 'Home', crumb: { label: 'Home' } }) },
       {
         path: 'station-diary',
         handle: handle({ crumb: { label: 'Station Diary', to: '/station-diary' } }),
