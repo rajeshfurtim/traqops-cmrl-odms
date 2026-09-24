@@ -1,19 +1,18 @@
-import { Bold, BookmarkPlus, Hash, ImagePlus, Italic, List, ListOrdered, Plus, Star, X } from 'lucide-react'
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { BookmarkPlus, Hash, ImagePlus, Plus, Star, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Checkbox, Textarea } from '@/components/ui/Field'
+import { Checkbox } from '@/components/ui/Field'
 import { Kbd } from '@/components/ui/Kbd'
 import { useNow } from '@/hooks/useNow'
 import type { HotKey } from '../constants'
 import { addEntry, generatePnNumber, useHotKeys } from '../data/diaryStore'
 import type { Attachment, Person, ShiftDiary } from '../types'
 import { formatStampSeconds } from '../utils'
+import { DiaryEditor, type DiaryEditorHandle } from './DiaryEditor'
 import { HotKeyDialog, type HotKeyDraft } from './HotKeyDialog'
 
-const TOOL =
-  'inline-flex size-8 items-center justify-center rounded-md text-ink-secondary hover:bg-subtle hover:text-ink'
 const HOT_KEY =
-  'inline-flex h-7 items-center gap-1.5 rounded-md border border-border bg-canvas px-2.5 text-secondary text-ink-secondary transition-colors hover:border-primary hover:text-primary-ink'
+  'inline-flex h-7 items-center gap-1.5 rounded-md border border-border-strong bg-surface px-2.5 text-secondary font-medium text-ink transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-ink'
 
 const draftKey = (diaryId: string) => `odms.diary.draft.${diaryId}`
 
@@ -48,55 +47,21 @@ export function EntryComposer({ diary, actor }: EntryComposerProps) {
   // null: closed · {}: "Add hot key" · { initial }: "Save as hot key" from the editor
   const [hotKeyDialog, setHotKeyDialog] = useState<{ initial?: HotKeyDraft } | null>(null)
   const hotKeys = useHotKeys(diary.stationCode)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const editorRef = useRef<DiaryEditorHandle>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const now = useNow(1000)
-  const ids = useId()
 
   // Keep unsent text if the page reloads or the connection drops.
   useEffect(() => writeDraft(diary.id, text), [diary.id, text])
 
-  const replaceSelection = (transform: (selected: string) => string, placeholder = '') => {
-    const el = textareaRef.current
-    if (!el) return
-    const { selectionStart: start, selectionEnd: end } = el
-    const selected = text.slice(start, end) || placeholder
-    const next = text.slice(0, start) + transform(selected) + text.slice(end)
-    setText(next)
-    requestAnimationFrame(() => {
-      el.focus()
-      const pos = start + transform(selected).length
-      el.setSelectionRange(pos, pos)
-    })
-  }
-
-  const wrap = (marker: string, placeholder: string) => replaceSelection((s) => `${marker}${s}${marker}`, placeholder)
-
-  const prefixLines = (numbered: boolean) =>
-    replaceSelection(
-      (s) =>
-        s
-          .split('\n')
-          .map((line, i) => `${numbered ? `${i + 1}.` : '-'} ${line.replace(/^\s*([-•]|\d+[.)])\s+/, '')}`)
-          .join('\n'),
-      'item',
-    )
-
   const insertHotKey = (hotKey: HotKey) => {
-    setText((current) => (current.trim() ? `${current.trimEnd()}\n${hotKey.template}` : hotKey.template))
-    requestAnimationFrame(() => {
-      const el = textareaRef.current
-      if (!el) return
-      el.focus()
-      // Jump to the first blank so the controller can type straight away.
-      const blank = el.value.indexOf('__')
-      if (blank >= 0) el.setSelectionRange(blank, blank + 2)
-    })
+    // On its own line, with the first "__" blank selected so the controller can type straight away.
+    editorRef.current?.insert(hotKey.template, { asNewLine: true, selectFirstBlank: true })
   }
 
   const addPn = () => {
     const pn = generatePnNumber(diary.stationCode)
-    replaceSelection(() => (text && !/\s$/.test(text) ? ` ${pn}` : pn))
+    editorRef.current?.insert(text && !/\s$/.test(text) ? ` ${pn}` : pn)
     setNotice(`${pn} generated.`)
   }
 
@@ -114,7 +79,7 @@ export function EntryComposer({ diary, actor }: EntryComposerProps) {
   const log = () => {
     if (!canLog) {
       setNotice(blanksLeft ? 'Fill in the blanks (__) before logging.' : 'Type an entry first.')
-      textareaRef.current?.focus()
+      editorRef.current?.focus()
       return
     }
     addEntry(diary.id, { text, important, attachments }, actor)
@@ -122,14 +87,7 @@ export function EntryComposer({ diary, actor }: EntryComposerProps) {
     setImportant(false)
     setAttachments([])
     setNotice('Entry logged.')
-    textareaRef.current?.focus()
-  }
-
-  const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-      event.preventDefault()
-      log()
-    }
+    editorRef.current?.focus()
   }
 
   const stamp = formatStampSeconds(new Date(now).toISOString())
@@ -144,6 +102,8 @@ export function EntryComposer({ diary, actor }: EntryComposerProps) {
             type="button"
             className={HOT_KEY}
             title={hotKey.template}
+            // Keep focus in the editor so the controller can type straight into the blank.
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => insertHotKey(hotKey)}
           >
             {hotKey.label}
@@ -154,56 +114,14 @@ export function EntryComposer({ diary, actor }: EntryComposerProps) {
         </Button>
       </div>
 
-      <div
-        className="flex flex-wrap items-center gap-0.5 border-b border-border px-2 py-1"
-        role="toolbar"
-        aria-label="Formatting"
-      >
-        <button type="button" className={TOOL} aria-label="Bold" title="Bold" onClick={() => wrap('**', 'bold text')}>
-          <Bold aria-hidden className="size-4" />
-        </button>
-        <button
-          type="button"
-          className={TOOL}
-          aria-label="Italic"
-          title="Italic"
-          onClick={() => wrap('_', 'italic text')}
-        >
-          <Italic aria-hidden className="size-4" />
-        </button>
-        <span aria-hidden className="mx-1 h-4 w-px bg-border" />
-        <button
-          type="button"
-          className={TOOL}
-          aria-label="Bulleted list"
-          title="Bulleted list"
-          onClick={() => prefixLines(false)}
-        >
-          <List aria-hidden className="size-4" />
-        </button>
-        <button
-          type="button"
-          className={TOOL}
-          aria-label="Numbered list"
-          title="Numbered list"
-          onClick={() => prefixLines(true)}
-        >
-          <ListOrdered aria-hidden className="size-4" />
-        </button>
-      </div>
-
-      <label htmlFor={`${ids}-text`} className="sr-only">
-        Diary entry
-      </label>
-      <Textarea
-        ref={textareaRef}
-        id={`${ids}-text`}
-        rows={3}
+      <DiaryEditor
+        ref={editorRef}
         value={text}
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={onKeyDown}
+        onChange={setText}
+        onSubmit={log}
+        size="lg"
+        label="Diary entry"
         placeholder="Type a diary entry, or pick a hot key above…"
-        className="block min-h-20 w-full resize-y rounded-none border-0 px-4 py-3 text-body-lg shadow-none focus-visible:outline-0 sm:text-body"
       />
 
       {attachments.length > 0 && (

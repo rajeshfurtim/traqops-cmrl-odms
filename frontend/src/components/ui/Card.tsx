@@ -21,7 +21,7 @@ interface CardHeaderProps {
 export function CardHeader({ title, aside, id, className = '' }: CardHeaderProps) {
   return (
     <div className={`flex items-center justify-between gap-3 ${className}`}>
-      <h2 id={id} className="text-heading text-ink">
+      <h2 id={id} className="text-secondary font-extrabold tracking-[0.06em] text-ink uppercase">
         {title}
       </h2>
       {aside}

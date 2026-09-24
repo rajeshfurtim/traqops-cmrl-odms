@@ -69,7 +69,7 @@ export function SidebarBrand({ collapsed = false }: { collapsed?: boolean }) {
 
 /** Product name, shown in the topbar on desktop. */
 export function ProductName({ className = '' }: { className?: string }) {
-  return <span className={`text-heading font-bold tracking-tight text-ink ${className}`}>ODMS</span>
+  return <span className={`font-display text-heading font-extrabold tracking-tight text-ink ${className}`}>ODMS</span>
 }
 
 /** Roundel + product name, for the compact mobile header. */

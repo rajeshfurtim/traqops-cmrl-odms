@@ -2,6 +2,12 @@ import { parseRichText, type RichSpan } from '../richText'
 
 function Spans({ spans }: { spans: RichSpan[] }) {
   return spans.map((span, i) => {
+    if (span.bold && span.italic)
+      return (
+        <strong key={i} className="font-semibold">
+          <em>{span.text}</em>
+        </strong>
+      )
     if (span.bold)
       return (
         <strong key={i} className="font-semibold">

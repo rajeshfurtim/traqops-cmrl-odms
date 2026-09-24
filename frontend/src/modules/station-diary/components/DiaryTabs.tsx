@@ -12,14 +12,14 @@ const TABS = [
 /** Sub-navigation shared by the Station Diary pages. */
 export function DiaryTabs() {
   return (
-    <nav aria-label="Station Diary" className="-mt-2 mb-5 flex gap-6 border-b border-border lg:-mt-3">
+    <nav aria-label="Station Diary" className="mb-5 flex gap-6 border-b border-border">
       {TABS.map(({ to, label, icon: Icon, end }) => (
         <NavLink
           key={to}
           to={to}
           end={end}
           className={({ isActive }) =>
-            `${TAB} ${isActive ? 'border-primary text-ink' : 'border-transparent text-ink-muted hover:text-ink'}`
+            `${TAB} ${isActive ? 'border-accent text-ink' : 'border-transparent text-ink-muted hover:text-ink'}`
           }
         >
           <Icon aria-hidden className="size-4" strokeWidth={1.75} />

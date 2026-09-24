@@ -98,7 +98,10 @@ export interface PdfMeta {
 
 function Spans({ spans }: { spans: RichSpan[] }) {
   return spans.map((span, i) => (
-    <Text key={i} style={span.bold ? { fontWeight: 600 } : span.italic ? { fontStyle: 'italic' } : undefined}>
+    <Text
+      key={i}
+      style={{ ...(span.bold ? { fontWeight: 600 } : {}), ...(span.italic ? { fontStyle: 'italic' as const } : {}) }}
+    >
       {span.text}
     </Text>
   ))

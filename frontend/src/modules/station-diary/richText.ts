@@ -15,17 +15,29 @@ export type RichBlock =
   | { type: 'bullet'; spans: RichSpan[] }
   | { type: 'numbered'; marker: string; spans: RichSpan[] }
 
-const INLINE = /(\*\*[^*]+\*\*|_[^_]+_)/g
+// Bold: **text**. Italic: _text_, not inside a word and not touching another underscore, so "__" blanks and
+// snake_case stay literal. Markers must hug the text (no leading/trailing spaces).
+const INLINE = /(\*\*(?=\S)[^*]+?(?<=\S)\*\*|(?<![_\p{L}\p{N}])_(?=\S)[^_]+?(?<=\S)_(?![_\p{L}\p{N}]))/gu
+const ITALIC_ONLY = /^_(?=\S)[^_]+(?<=\S)_$/u
+const BOLD_ONLY = /^\*\*(?=\S)[^*]+(?<=\S)\*\*$/u
 
 export function parseInline(line: string): RichSpan[] {
   return line
     .split(INLINE)
     .filter(Boolean)
     .map((part) => {
-      if (part.startsWith('**') && part.endsWith('**') && part.length > 4)
-        return { text: part.slice(2, -2), bold: true }
-      if (part.startsWith('_') && part.endsWith('_') && part.length > 2)
-        return { text: part.slice(1, -1), italic: true }
+      if (BOLD_ONLY.test(part)) {
+        const inner = part.slice(2, -2)
+        return ITALIC_ONLY.test(inner)
+          ? { text: inner.slice(1, -1), bold: true, italic: true }
+          : { text: inner, bold: true }
+      }
+      if (ITALIC_ONLY.test(part)) {
+        const inner = part.slice(1, -1)
+        return BOLD_ONLY.test(inner)
+          ? { text: inner.slice(2, -2), bold: true, italic: true }
+          : { text: inner, italic: true }
+      }
       return { text: part }
     })
 }

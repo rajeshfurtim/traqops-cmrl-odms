@@ -33,8 +33,10 @@ the **light theme** (it is the primary theme; dark must not regress).
 ## Stack
 
 React 19 · TypeScript (strict, `noUnusedLocals`) · Vite · Tailwind CSS v4 (tokens in `src/styles/index.css`) ·
-React Router 7 (data router, lazy routes) · lucide-react icons · `@react-pdf/renderer` for PDFs · Inter
-(`@fontsource-variable/inter` for the UI, `@fontsource/inter` WOFF files for PDFs).
+React Router 7 (data router, lazy routes) · lucide-react icons · TipTap (diary WYSIWYG editor) ·
+`@react-pdf/renderer` for PDFs · Inter
+(`@fontsource-variable/inter` for the UI, `@fontsource/inter` WOFF files for PDFs) · Manrope headings
+(`@fontsource-variable/manrope`).
 
 **Dependencies must be free and open source** (MIT, ISC, Apache-2.0, BSD, OFL, …). No paid, trial or
 account-gated packages or services. Don't copy font or binary files into `src/`; import them from npm packages. Add a
@@ -70,6 +72,12 @@ frontend/src/
   `text-secondary`, `text-caption`, `text-label`, `text-heading`, `text-title`. Printed forms use the `paper-*` tokens,
   which stay white in dark mode.
 - **Sizes in rem**, never px, in components (the root font size is fluid). Borders and focus rings may stay px.
+- **Look: "Station Signage"** (chosen by the client): crisp neutral greys, **deep navy** (`primary`, `header`,
+  `nav`) and **signal yellow** (`accent`) like metro wayfinding signs. Page titles sit in a navy **page header bar
+  with a yellow left edge** (`PageHeader`, `.on-header` token scope), whose main action turns yellow automatically.
+  Active tab and sidebar markers are yellow. Headings use **Manrope** (`font-display`, applied to h1–h3), body text
+  Inter. Panel titles (`CardHeader`) are small uppercase. Corners are squarer (radius 3/5/6/8px) and cards flat.
+  Don't hard-code colours to fight this; change tokens in `index.css`.
 - **Light theme first:** design and verify in light, then check dark. Navy sidebar uses the `.on-dark` token scope.
 - **Accessibility:** real labels on every control, `aria-*` on custom widgets, visible focus, no information by
   colour alone.
@@ -115,9 +123,12 @@ frontend/src/
     selecting the first `__` blank. Users create them with **Save as hot key** (from the typed message) or
     **Add hot key** (a dialog with name + message). **No keyboard shortcuts** for hot keys, and hot keys never log
     an entry by themselves.
-  - Editor: light markup (`**bold**`, `_italic_`, `- ` / `1. ` lists) parsed by `richText.ts`. Never inject HTML.
-    Attach images, generate PN numbers, mark ★ important, and log with Ctrl/⌘+Enter. Unsent text is kept as a draft
-    per shift.
+  - Editor is **WYSIWYG** (`components/DiaryEditor.tsx`, TipTap, MIT): bold, italic, bulleted and numbered lists,
+    undo/redo show formatted while typing (typing `- ` or `1. ` starts a list). Entries are still **stored as light
+    markup** (`**bold**`, `_italic_`, `- ` / `1. ` lines) via `editorMarkup.ts`, parsed by `richText.ts` for the
+    timeline, booklet and PDF. Only add editor features the markup can store. Never inject HTML. The same editor is
+    used for Edit. Attach images, generate PN numbers, mark ★ important, log with Ctrl/⌘+Enter. Unsent text is kept
+    as a draft per shift.
   - **Submit & hand over** confirms the summary and the incoming controller, then locks the shift. Past shifts are
     read-only.
   - **Shift Summary** has a Table / **Booklet view** switch. The booklet shows each shift on the official form.

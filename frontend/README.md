@@ -119,6 +119,18 @@ official reversed artwork when available). Text tokens meet WCAG AA (≥ 4.5:1) 
 - **Live state:** `<StatusDot live />` pulses slowly for "happening now" (the active shift). It stops when reduced motion is on.
 - **Contrast:** all text tokens meet WCAG AA (≥ 4.5:1) in both themes and on navy.
 
+## Look: Station Signage
+
+Chosen from the visual refresh preview: neutral greys, deep navy and signal yellow, like metro wayfinding signs.
+
+- **Page header:** every `<PageHeader>` is a navy bar with a yellow left edge (`bg-header`, `border-accent`).
+  The `.on-header` scope re-values tokens inside it, so text turns white and the primary action turns yellow.
+- **Accent:** `accent` (signal yellow) for the page-header edge and action, the active tab and the sidebar marker,
+  important stars and the follow-ups band.
+- **Type:** Manrope (`font-display`, OFL) for h1–h3, the brand and key figures; Inter for everything else.
+  Panel titles are small uppercase.
+- **Shape:** squarer corners (3 / 5 / 6 / 8px) and flat cards (`shadow-card` is a 1px line).
+
 ## Design system
 
 All tokens are in `src/styles/index.css`. The default Tailwind palette and type scale are cleared, so only ODMS tokens can be used.
@@ -130,5 +142,5 @@ All tokens are in `src/styles/index.css`. The default Tailwind palette and type 
 - **Spacing:** Tailwind's 4px scale; layout sizes `sidebar` 248, `sidebar-rail` 64, `topbar` 56, max content width 1600
 - **Paper:** `paper`, `paper-ink`, `paper-muted`, `paper-line`, `paper-head`, `paper-sign`, `paper-alert` for printed
   forms (booklet, PDF preview). They stay the same in dark mode, like a printout.
-- **Radius:** 4 / 6 / 8 / 12. **Elevation:** `shadow-xs`, `shadow-sm`, `shadow-overlay` (overlays only)
+- **Radius:** 3 / 5 / 6 / 8. **Elevation:** `shadow-xs`, `shadow-sm`, `shadow-overlay` (overlays only)
 - **Motion:** 150–220ms using `--ease-standard`; turned off when the user prefers reduced motion

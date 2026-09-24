@@ -10,7 +10,7 @@ import {
   Star,
   Trash2,
 } from 'lucide-react'
-import { useId, useMemo, useState, type FormEvent, type KeyboardEvent } from 'react'
+import { useId, useMemo, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { Checkbox, Label, Textarea } from '@/components/ui/Field'
@@ -19,6 +19,7 @@ import { addFollowUp, closeFollowUp, deleteEntry, editEntry, type EntryChange } 
 import { toPlainText } from '../richText'
 import type { DiaryEntry, FollowUp, Person, ShiftDiary } from '../types'
 import { formatFormDate, formatShortDate, formatStamp, formatTime, toISODate } from '../utils'
+import { DiaryEditor } from './DiaryEditor'
 import { RichText } from './RichText'
 
 type Filter = 'all' | 'important'
@@ -134,7 +135,10 @@ export function DiaryTimeline({ diary, previousId, nextId, editable, actor }: Di
       </div>
 
       {openCount > 0 && (
-        <section aria-labelledby="pinned-follow-ups" className="border-b border-warning-dot/30 bg-warning-subtle">
+        <section
+          aria-labelledby="pinned-follow-ups"
+          className="border-b border-l-4 border-warning-dot/30 border-l-accent bg-warning-subtle"
+        >
           <h3
             id="pinned-follow-ups"
             className="flex items-center gap-1.5 px-4 pt-2.5 text-label text-warning uppercase"
@@ -375,30 +379,22 @@ function EditEntryForm({
     onSave({ text, important })
   }
 
-  const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Escape') onCancel()
-    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) submit()
-  }
-
   return (
     <form onSubmit={submit} className="flex flex-col gap-2" noValidate>
-      <label htmlFor={`${ids}-text`} className="sr-only">
-        Edit entry
-      </label>
-      <Textarea
-        id={`${ids}-text`}
-        rows={3}
-        autoFocus
-        value={text}
-        onChange={(e) => {
-          setText(e.target.value)
-          setError('')
-        }}
-        onKeyDown={onKeyDown}
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? `${ids}-error` : undefined}
-        className="w-full resize-y"
-      />
+      <div className="overflow-hidden rounded-md border border-border-strong bg-surface">
+        <DiaryEditor
+          value={text}
+          onChange={(markup) => {
+            setText(markup)
+            setError('')
+          }}
+          onSubmit={() => submit()}
+          onCancel={onCancel}
+          label="Edit entry"
+          autoFocus
+          invalid={Boolean(error)}
+        />
+      </div>
       {error && (
         <p id={`${ids}-error`} className="text-caption text-danger">
           {error}
