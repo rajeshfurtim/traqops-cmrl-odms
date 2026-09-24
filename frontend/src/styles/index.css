@@ -1,0 +1,365 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter/opsz.css';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *, .on-dark, .on-dark *));
+
+@theme {
+  /* Typography ---------------------------------------------------- */
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+
+  --text-*: initial;
+  --text-display: 1.75rem; /* 28px */
+  --text-display--line-height: 2.25rem;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 700;
+
+  --text-title-lg: 1.375rem; /* 22px — page title, desktop */
+  --text-title-lg--line-height: 1.875rem;
+  --text-title-lg--letter-spacing: -0.015em;
+  --text-title-lg--font-weight: 600;
+
+  --text-title: 1.125rem; /* 18px — page title, compact */
+  --text-title--line-height: 1.625rem;
+  --text-title--letter-spacing: -0.01em;
+  --text-title--font-weight: 600;
+
+  --text-heading: 0.9375rem; /* 15px — section title */
+  --text-heading--line-height: 1.375rem;
+  --text-heading--letter-spacing: -0.005em;
+  --text-heading--font-weight: 600;
+
+  --text-body-lg: 1rem; /* 16px — touch inputs */
+  --text-body-lg--line-height: 1.5rem;
+
+  --text-body: 0.875rem; /* 14px — default UI text */
+  --text-body--line-height: 1.375rem;
+
+  --text-secondary: 0.8125rem; /* 13px — supporting text */
+  --text-secondary--line-height: 1.25rem;
+
+  --text-caption: 0.75rem; /* 12px — metadata, timestamps */
+  --text-caption--line-height: 1rem;
+
+  --text-label: 0.6875rem; /* 11px — group labels (use with `uppercase`) */
+  --text-label--line-height: 1rem;
+  --text-label--letter-spacing: 0.055em;
+  --text-label--font-weight: 600;
+
+  /* Color --------------------------------------------------------- */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Neutrals: blue-slate — calm, precise, professional */
+  --color-canvas: #f5f7fa; /* app background */
+  --color-surface: #ffffff; /* panels, cards */
+  --color-surface-raised: #ffffff; /* popovers, dialogs */
+  --color-subtle: #eef2f8; /* hover fill */
+  --color-muted: #e2e8f3; /* pressed / selected fill */
+  /* Hairlines: translucent, so they sit equally well on canvas, surface and tinted fills */
+  --color-border: rgb(15 40 80 / 0.1);
+  --color-border-strong: rgb(15 40 80 / 0.2);
+
+  --color-ink: #172033; /* primary text */
+  --color-ink-secondary: #475569; /* secondary text */
+  --color-ink-muted: #5d6b80; /* muted / captions */
+  --color-ink-disabled: #94a3b8;
+
+  /* Primary: CMRL blue — #155EEF */
+  --color-primary: #155eef;
+  --color-primary-hover: #1249cc;
+  --color-primary-active: #0f3ead;
+  --color-primary-subtle: #eef4ff;
+  --color-primary-ink: #1249cc; /* text on primary-subtle */
+  --color-focus: #3b82f6;
+
+  /* Status */
+  --color-success: #0c6e40;
+  --color-success-dot: #12b76a;
+  --color-success-subtle: #edfcf2;
+  --color-warning: #85560a;
+  --color-warning-dot: #f79009;
+  --color-warning-subtle: #fefce8;
+  --color-danger: #b12218;
+  --color-danger-dot: #f04438;
+  --color-danger-subtle: #fef3f2;
+  --color-info: #0a5ea8;
+  --color-info-dot: #0ea5e9;
+  --color-info-subtle: #f0f9ff;
+
+  --color-on-primary: #ffffff;
+  --color-tooltip: #0f172a;
+  --color-on-tooltip: #f8fafc;
+
+  --color-overlay: rgb(15 23 42 / 0.5);
+
+  /* Navigation surface: CMRL transit navy (sidebar, mobile drawer) */
+  --color-nav: #0b1f3a;
+
+  /* Paper: printed forms (diary booklet, PDF preview). Stays white in dark mode, like a printout. */
+  --color-paper: #ffffff;
+  --color-paper-ink: #1f2937;
+  --color-paper-muted: #6b7280;
+  --color-paper-line: #9ca3af;
+  --color-paper-head: #eef2f8;
+  --color-paper-brand: #0b1f3a;
+  --color-paper-sign: #1e3a8a;
+  --color-paper-alert: #b12218;
+
+  /* Radius */
+  --radius-sm: 0.25rem; /*  4px */
+  --radius-md: 0.375rem; /*  6px */
+  --radius-lg: 0.5rem; /*  8px */
+  --radius-xl: 0.75rem; /* 12px */
+
+  /* Elevation — very subtle shadows for premium feel */
+  --shadow-xs: 0 1px 2px rgb(15 23 42 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(15 23 42 / 0.06), 0 1px 2px rgb(15 23 42 / 0.04);
+  --shadow-overlay: 0 16px 32px -4px rgb(15 23 42 / 0.16), 0 4px 12px rgb(15 23 42 / 0.06);
+  /* Resting panels: barely-there lift in light, a faint top highlight in dark */
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 1px rgb(15 23 42 / 0.02);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Layout */
+  --spacing-sidebar: 15.5rem; /* 248px */
+  --spacing-sidebar-rail: 4rem; /*  64px */
+  --spacing-topbar: 3.5rem; /*  56px */
+  --spacing-topbar-lg: 4rem; /*  64px — tablet and up; shared with the sidebar header so their lines meet */
+  --container-content: 100rem; /* 1600px */
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-canvas: #080f1c;
+  --color-surface: #0d1626;
+  --color-surface-raised: #111e33;
+  --color-subtle: #162036;
+  --color-muted: #1c2c48;
+  --color-border: rgb(148 178 230 / 0.12);
+  --color-border-strong: rgb(148 178 230 / 0.22);
+
+  --color-ink: #e2e8f4;
+  --color-ink-secondary: #8fa6c6;
+  --color-ink-muted: #7b90b0;
+  --color-ink-disabled: #374d66;
+
+  --color-primary: #4285f4;
+  --color-primary-hover: #5a96f6;
+  --color-primary-active: #3572e8;
+  --color-primary-subtle: #0d1f42;
+  --color-primary-ink: #93bbff;
+  --color-focus: #4285f4;
+
+  --color-success: #3ab87a;
+  --color-success-dot: #10b57a;
+  --color-success-subtle: #091e14;
+  --color-warning: #e5a800;
+  --color-warning-dot: #f59e0b;
+  --color-warning-subtle: #1c1500;
+  --color-danger: #f87171;
+  --color-danger-dot: #ef4444;
+  --color-danger-subtle: #28100f;
+  --color-info: #38bdf8;
+  --color-info-dot: #0ea5e9;
+  --color-info-subtle: #041422;
+
+  --color-tooltip: #e2e8f4;
+  --color-on-tooltip: #080f1c;
+  --color-overlay: rgb(0 0 0 / 0.72);
+  --color-nav: #071427;
+
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.5), 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-overlay: 0 16px 32px -4px rgb(0 0 0 / 0.7), 0 4px 12px rgb(0 0 0 / 0.4);
+  --shadow-card: inset 0 1px 0 rgb(255 255 255 / 0.03);
+}
+
+/* Suppress transitions for the frame in which the theme switches */
+:root[data-theme-switching] *,
+:root[data-theme-switching] *::before,
+:root[data-theme-switching] *::after {
+  transition: none !important;
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
+
+  html {
+    font-size: clamp(100%, 0.6667rem + 0.3333vw, 150%);
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color-scheme: light;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    font-feature-settings: 'cv11', 'ss03';
+    font-optical-sizing: auto;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  html:has(dialog[open]:modal) {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 100;
+    transform: translateY(-200%);
+    border-radius: var(--radius-md);
+    background: var(--color-ink);
+    color: var(--color-white);
+    padding: 0.5rem 0.875rem;
+    font-weight: 500;
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+
+  .on-dark {
+    color-scheme: dark;
+    --color-ink: #ffffff; /* active / hover */
+    --color-ink-secondary: rgba(255, 255, 255, 0.88); /* nav items */
+    --color-ink-muted: rgba(255, 255, 255, 0.7); /* group labels, icons */
+    --color-ink-disabled: rgba(255, 255, 255, 0.52); /* "Soon" items — readable, still secondary */
+    --color-subtle: rgba(255, 255, 255, 0.055);
+    --color-muted: rgba(255, 255, 255, 0.08);
+    --color-canvas: rgba(0, 0, 0, 0.18);
+    --color-border: rgba(255, 255, 255, 0.07);
+    --color-border-strong: rgba(255, 255, 255, 0.13);
+    --color-surface: rgba(255, 255, 255, 0.04);
+    --color-primary: #7aa7ff;
+    --color-primary-subtle: rgba(90, 141, 248, 0.2);
+    --color-primary-ink: #ffffff;
+    --color-focus: #7aa7ff;
+    --color-success: #5fd9a0;
+    --color-warning: #fcd34d;
+    --color-danger: #fca5a5;
+    --color-info: #7dd3fc;
+    --color-success-dot: #34c78a;
+    --color-warning-dot: #fbbf24;
+    --color-danger-dot: #f87171;
+    --color-info-dot: #38bdf8;
+  }
+
+  /* Side drawer (native <dialog>) */
+  .odms-drawer {
+    transform: translateX(-100%);
+    transition:
+      transform 220ms var(--ease-standard),
+      overlay 220ms allow-discrete,
+      display 220ms allow-discrete;
+  }
+  .odms-drawer[open] {
+    transform: none;
+  }
+  @starting-style {
+    .odms-drawer[open] {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* Centered dialog (search) */
+  .odms-dialog {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+    transition:
+      opacity 160ms var(--ease-standard),
+      transform 160ms var(--ease-standard),
+      overlay 160ms allow-discrete,
+      display 160ms allow-discrete;
+  }
+  .odms-dialog[open] {
+    opacity: 1;
+    transform: none;
+  }
+  @starting-style {
+    .odms-dialog[open] {
+      opacity: 0;
+      transform: translateY(6px) scale(0.985);
+    }
+  }
+
+  .odms-drawer::backdrop,
+  .odms-dialog::backdrop {
+    background-color: transparent;
+    transition:
+      background-color 200ms var(--ease-standard),
+      overlay 200ms allow-discrete,
+      display 200ms allow-discrete;
+  }
+  .odms-drawer[open]::backdrop,
+  .odms-dialog[open]::backdrop {
+    background-color: var(--color-overlay);
+  }
+  @starting-style {
+    .odms-drawer[open]::backdrop,
+    .odms-dialog[open]::backdrop {
+      background-color: transparent;
+    }
+  }
+
+  .odms-live {
+    animation: odms-live 2.4s var(--ease-standard) infinite;
+  }
+  @keyframes odms-live {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 45%, transparent);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 0.375rem transparent;
+    }
+  }
+
+  .odms-pop {
+    animation: odms-pop-in 140ms var(--ease-standard);
+    transform-origin: top right;
+  }
+  @keyframes odms-pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.98);
+    }
+  }
+}
