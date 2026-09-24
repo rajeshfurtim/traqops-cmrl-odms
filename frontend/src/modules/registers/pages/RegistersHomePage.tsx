@@ -11,7 +11,7 @@ import { CATEGORIES, CATEGORY_ORDER, REGISTERS } from '../definitions'
 export default function RegistersHomePage() {
   const records = useRecords()
   const openCount = (id: string) => records.filter((r) => r.registerId === id && r.status !== 'closed').length
-  // Arriving from a diary entry: the controller picks which register the record belongs in.
+
   const [params] = useSearchParams()
   const fromEntryId = params.get('fromEntry')
   const fromEntry = fromEntryId ? getDiaryEntry(fromEntryId) : undefined

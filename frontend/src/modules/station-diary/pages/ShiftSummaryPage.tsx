@@ -68,7 +68,6 @@ export default function ShiftSummaryPage() {
   const current = Math.min(page, pageCount - 1)
   const visible = filtered.slice(current * pageSize, current * pageSize + pageSize)
 
-  // Any filter change starts again from the first page.
   const onFilter =
     <T,>(set: (v: T) => void) =>
     (v: T) => {
@@ -258,7 +257,6 @@ export default function ShiftSummaryPage() {
           <Card className="px-6 py-14 text-center text-body text-ink-muted">No shifts match these filters.</Card>
         ) : mode === 'table' ? (
           <>
-            {/* Screen View: Interactive Card Table */}
             <Card className="overflow-hidden print:hidden">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[56rem] border-collapse text-body tabular-nums">
@@ -342,7 +340,6 @@ export default function ShiftSummaryPage() {
               </div>
             </Card>
 
-            {/* Official CMRL Printable Template (shown ONLY when printing) */}
             <div className="hidden print:block">
               <SummaryTableSheet
                 diaries={filtered}
@@ -385,7 +382,6 @@ export default function ShiftSummaryPage() {
         )}
       </div>
 
-      {/* Export Table as PDF Dialog (shows official CMRL template preview & downloads PDF) */}
       <ExportTablePdfDialog
         open={tablePdfDialogOpen}
         onClose={() => setTablePdfDialogOpen(false)}
@@ -399,7 +395,6 @@ export default function ShiftSummaryPage() {
         actor={actor}
       />
 
-      {/* Export Shift Diary Sheets Booklet as PDF Dialog */}
       <ExportPdfDialog
         open={exportFor !== null}
         onClose={() => setExportFor(null)}

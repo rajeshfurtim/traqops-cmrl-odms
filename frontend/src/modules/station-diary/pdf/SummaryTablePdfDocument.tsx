@@ -20,9 +20,7 @@ try {
     fonts: [{ src: extRegular }, { src: extSemiBold, fontWeight: 600 }, { src: extItalic, fontStyle: 'italic' }],
   })
   Font.registerHyphenationCallback((word) => [word])
-} catch {
-  // Already registered
-}
+} catch {}
 
 const INK = '#1f2937'
 const MUTED = '#6b7280'
@@ -130,14 +128,11 @@ export function SummaryTablePdfDocument({
       producer="ODMS"
     >
       <Page size="A4" style={styles.page}>
-        {/* CMRL Logo Watermark */}
         <View style={styles.watermark} fixed>
           <Image src={logo} style={styles.watermarkLogo} />
         </View>
 
-        {/* Outer Official Form Frame */}
         <View style={styles.sheetFrame}>
-          {/* Header Table */}
           <View style={[styles.table, styles.row]}>
             <View style={[styles.cell, styles.center, { width: '12%' }]}>
               <Image src={logo} style={{ width: 32, height: 32, objectFit: 'contain' }} />
@@ -164,7 +159,6 @@ export function SummaryTablePdfDocument({
             </View>
           </View>
 
-          {/* Filter & Metadata Block */}
           <View style={styles.table}>
             <View style={styles.row}>
               <Text style={[styles.cell, styles.headerCell, { width: '15%' }]}>Shift Filter</Text>
@@ -182,9 +176,7 @@ export function SummaryTablePdfDocument({
             </View>
           </View>
 
-          {/* Summary Table */}
           <View style={styles.table}>
-            {/* Table Header */}
             <View style={styles.row} fixed>
               {['Date', 'Shift', 'Station Controller', 'Entries', 'Status', 'Handed over by', 'Taken over by'].map(
                 (h, i) => (
@@ -205,7 +197,6 @@ export function SummaryTablePdfDocument({
               )}
             </View>
 
-            {/* Table Rows */}
             {diaries.length === 0 ? (
               <View style={styles.row}>
                 <Text style={[styles.cell, { width: '100%', textAlign: 'center', color: MUTED, paddingVertical: 10 }]}>
@@ -240,7 +231,6 @@ export function SummaryTablePdfDocument({
             )}
           </View>
 
-          {/* Form Footer */}
           <View style={styles.footer}>
             <Text>{genLine} · Official Station Operations Register</Text>
             <Text render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`} />

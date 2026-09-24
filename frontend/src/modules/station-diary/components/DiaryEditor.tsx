@@ -7,26 +7,25 @@ import { docToMarkup, markupToHtml } from '../editorMarkup'
 
 export interface DiaryEditorHandle {
   focus: () => void
-  /** Inserts markup at the cursor (or at the end), e.g. a PN number or a hot key message. */
+
   insert: (markup: string, options?: { asNewLine?: boolean; selectFirstBlank?: boolean }) => void
 }
 
 interface DiaryEditorProps {
-  /** Stored markup (see richText.ts). */
   value: string
   onChange: (markup: string) => void
-  /** Ctrl/⌘ + Enter. */
+
   onSubmit?: () => void
-  /** Esc. */
+
   onCancel?: () => void
   placeholder?: string
   label: string
   autoFocus?: boolean
-  /** Taller writing area for the main composer. */
+
   size?: 'md' | 'lg'
   invalid?: boolean
   ref?: Ref<DiaryEditorHandle>
-  /** Extra controls at the right of the toolbar. */
+
   toolbarEnd?: ReactNode
 }
 
@@ -35,7 +34,6 @@ const TOOL =
 
 const MIN_HEIGHT: Record<'md' | 'lg', string> = { md: 'min-h-20', lg: 'min-h-24' }
 
-/** Selects the first "__" blank at or after `from`, so the controller can type straight over it. */
 function selectFirstBlank(editor: Editor, from = 0) {
   let found: { from: number; to: number } | undefined
   editor.state.doc.descendants((node, pos) => {
@@ -45,14 +43,10 @@ function selectFirstBlank(editor: Editor, from = 0) {
     return false
   })
   if (found) editor.commands.setTextSelection(found)
-  // Focus synchronously: TipTap's focus command is deferred and can lose to the clicked button.
+
   editor.view.focus()
 }
 
-/**
- * WYSIWYG editor for diary entries: bold, italic and lists show as formatted while typing.
- * Supports only what the stored markup supports, so what you see is exactly what is logged and printed.
- */
 export function DiaryEditor({
   value,
   onChange,
@@ -66,9 +60,8 @@ export function DiaryEditor({
   ref,
   toolbarEnd,
 }: DiaryEditorProps) {
-  // Last markup this editor emitted, so external updates (clear, hot key) are told apart from typing.
   const emitted = useRef(value)
-  // Latest callbacks, read by the editor's handlers (the editor is created once).
+
   const handlers = useRef({ onChange, onSubmit, onCancel })
   useLayoutEffect(() => {
     handlers.current = { onChange, onSubmit, onCancel }
@@ -77,7 +70,6 @@ export function DiaryEditor({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        // Only what the diary markup can store.
         heading: false,
         blockquote: false,
         code: false,

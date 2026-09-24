@@ -3,7 +3,6 @@ import { SoonBadge } from '@/components/ui/Badge'
 import { Tooltip } from '@/components/ui/Tooltip'
 import type { NavItem } from '@/types'
 
-// Icon column is fixed so icons never shift while the sidebar animates.
 const ITEM =
   'relative flex w-full items-center gap-3 overflow-hidden rounded-md px-2.75 text-body font-medium transition-colors duration-150'
 
@@ -58,7 +57,6 @@ export function SidebarItem({ item, collapsed, density = 'default', onNavigate }
 
   return (
     <li className="relative">
-      {/* Active indicator on the sidebar's outer edge */}
       {isActive && <span aria-hidden className="absolute top-2 bottom-2 -left-3 w-0.75 rounded-r-full bg-accent" />}
       <Tooltip
         content={available ? item.label : `${item.label} · Coming soon`}

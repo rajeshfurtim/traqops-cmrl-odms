@@ -25,7 +25,6 @@ export const STATUS_TONES: Record<RecordStatus, BadgeTone> = {
   closed: 'success',
 }
 
-/** Allowed next statuses. Closed records can't be reopened; raise a new one. */
 export const NEXT_STATUSES: Record<RecordStatus, RecordStatus[]> = {
   open: ['in-progress', 'pending-verification', 'closed'],
   'in-progress': ['pending-verification', 'closed'],

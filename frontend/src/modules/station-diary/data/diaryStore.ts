@@ -1,10 +1,3 @@
-/*
- * Station Diary data layer.
- *
- * In-memory mock with the shape of the future API: components only call the hooks
- * and actions exported here, so swapping this file for HTTP calls leaves the UI untouched.
- * Entries are append-only; every change a controller makes is also written to the diary.
- */
 import { useSyncExternalStore } from 'react'
 import { DEFAULT_HOT_KEYS, HOT_KEY_NAME_MAX, TASK_STATUS_LABELS, type HotKey } from '../constants'
 import type { Attachment, DiaryEntry, Person, ShiftDiary, TaskStatus } from '../types'

@@ -12,7 +12,6 @@ import { StationContext } from './StationContext'
 
 export const MOBILE_DRAWER_ID = 'mobile-navigation'
 
-/** Full navigation for mobile and tablet, as a modal side drawer. */
 export function MobileDrawer() {
   const { drawerOpen, closeDrawer } = useShell()
   const { user } = useSession()

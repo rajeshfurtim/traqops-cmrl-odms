@@ -3,7 +3,6 @@ import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 
-/** Last-resort boundary when the shell itself fails to render. */
 export default function RouteErrorPage() {
   const error = useRouteError()
   const detail = isRouteErrorResponse(error) ? `${error.status} ${error.statusText}` : undefined

@@ -13,12 +13,11 @@ interface HotKeyDialogProps {
   open: boolean
   onClose: () => void
   stationCode: string
-  /** Pre-filled from the editor ("Save as hot key"); empty for "Add hot key". */
+
   initial?: HotKeyDraft
   onSaved: (label: string) => void
 }
 
-/** Saves a reusable message as a station hot key. */
 export function HotKeyDialog({ open, onClose, stationCode, initial, onSaved }: HotKeyDialogProps) {
   return (
     <Modal
@@ -32,7 +31,6 @@ export function HotKeyDialog({ open, onClose, stationCode, initial, onSaved }: H
   )
 }
 
-/** Suggests a short name from the first words of the message. */
 function suggestName(template: string): string {
   const words = template.replace(/[*_]/g, '').replace(/__/g, '').trim().split(/\s+/).slice(0, 3).join(' ')
   return words.length > HOT_KEY_NAME_MAX ? words.slice(0, HOT_KEY_NAME_MAX).trim() : words.replace(/[.,:;]$/, '')

@@ -6,11 +6,6 @@ interface DialogProps extends Omit<DialogHTMLAttributes<HTMLDialogElement>, 'ope
   children: ReactNode
 }
 
-/**
- * Modal built on the native <dialog>: top-layer rendering, inert background,
- * Escape handling and focus restoration come from the platform.
- * Focus lands on the first `[data-autofocus]` element, else the first focusable one.
- */
 export function Dialog({ open, onClose, children, ...props }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null)
 
@@ -25,7 +20,6 @@ export function Dialog({ open, onClose, children, ...props }: DialogProps) {
     }
   }, [open])
 
-  // Clicks on the ::backdrop target the dialog itself, outside its box.
   const handleClick = (event: MouseEvent<HTMLDialogElement>) => {
     if (event.target !== event.currentTarget) return
     const r = event.currentTarget.getBoundingClientRect()

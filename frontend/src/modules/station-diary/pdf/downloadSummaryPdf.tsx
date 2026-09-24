@@ -14,10 +14,6 @@ export interface DownloadSummaryPdfRequest {
   fileName: string
 }
 
-/**
- * Builds the official CMRL Shift Summary Table PDF in browser and saves it.
- * Lazy-loaded by ShiftSummaryPage.
- */
 export async function downloadSummaryPdf({
   diaries,
   stationName,

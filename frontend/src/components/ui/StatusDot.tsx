@@ -9,9 +9,9 @@ const TONES: Record<StatusTone, string> = {
 
 interface StatusDotProps {
   tone: StatusTone
-  /** Static soft ring around the dot. */
+
   halo?: boolean
-  /** Slow pulsing ring for live, "happening now" states. Replaces the halo. */
+
   live?: boolean
   className?: string
 }

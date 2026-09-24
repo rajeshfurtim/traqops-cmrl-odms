@@ -64,7 +64,6 @@ export function toTsv(diaries: ShiftDiary[], meta?: TableExportMeta): string {
 
 const csvCell = (value: string) => (/[",\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value)
 
-/** Excel-compatible CSV in official CMRL template format (with BOM so ₹ and names open correctly). */
 export function downloadCsv(diaries: ShiftDiary[], fileName: string, meta?: TableExportMeta) {
   const metaLines = buildMetaLines(meta, diaries.length)
   const csv = [...metaLines, HEADERS, ...rows(diaries)].map((r) => r.map(csvCell).join(',')).join('\r\n')

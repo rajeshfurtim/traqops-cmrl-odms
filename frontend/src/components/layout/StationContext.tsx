@@ -2,11 +2,6 @@ import { TrainFront } from 'lucide-react'
 import { useSession } from '@/context/SessionContext'
 
 interface StationContextProps {
-  /**
-   * `full`    — name + code, two lines (wide desktop)
-   * `compact` — station code on one line (tablet / small desktop)
-   * `minimal` — short name + code inline (mobile context bar)
-   */
   variant?: 'full' | 'compact' | 'minimal'
   className?: string
 }

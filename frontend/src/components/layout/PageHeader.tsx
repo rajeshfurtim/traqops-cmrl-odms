@@ -6,14 +6,11 @@ import type { Crumb } from '@/types'
 interface PageHeaderProps {
   title: string
   description?: ReactNode
-  /**
-   * `auto` (default): the topbar shows the trail on desktop, so the page only
-   * adds a compact back link on smaller screens. Pass items to always render a full trail.
-   */
+
   breadcrumb?: 'auto' | Crumb[] | false
-  /** Inline status next to the title, e.g. a <Badge>. */
+
   status?: ReactNode
-  /** Page-level actions, right-aligned on desktop and wrapped below on mobile. */
+
   actions?: ReactNode
   className?: string
 }
@@ -29,7 +26,6 @@ export function PageHeader({
   const routeCrumbs = useBreadcrumbs()
 
   return (
-    // Station Signage: a navy sign with a signal-yellow edge. `.on-header` re-values tokens for everything inside.
     <header
       className={`on-header mb-5 rounded-xl border-l-[0.5rem] border-accent bg-header px-4 py-4 text-ink shadow-card sm:px-5 lg:mb-6 lg:px-6 lg:py-5 ${className}`}
     >

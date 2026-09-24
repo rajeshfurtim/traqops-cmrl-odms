@@ -5,7 +5,6 @@ export function initials(name: string): string {
   return (first + last).toUpperCase()
 }
 
-/** "14:00 – 22:00" */
 export function formatShiftRange(start: string, end: string): string {
   return `${start} – ${end}`
 }

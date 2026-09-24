@@ -35,7 +35,6 @@ const TH =
   'border-b border-border bg-canvas px-3 py-2 text-left text-caption font-medium whitespace-nowrap text-ink-muted'
 const TD = 'border-b border-border px-3 py-2.5 align-top'
 
-/** Pre-fills a new record from a diary entry: the title field gets the first line, the first long field the full text. */
 function valuesFromEntry(register: RegisterDefinition, text: string): Record<string, string> {
   const firstLine = toPlainText(text.split('\n')[0]).replace(/[:;,]\s*$/, '')
   const values: Record<string, string> = {

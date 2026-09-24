@@ -24,7 +24,6 @@ export default function DashboardPage() {
       />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        {/* ── Active modules ──────────────────────────────────────────── */}
         <section aria-labelledby="modules-heading">
           <h2 id="modules-heading" className="mb-3 text-label font-semibold tracking-wide text-ink-muted uppercase">
             Modules
@@ -57,7 +56,6 @@ export default function DashboardPage() {
           </ul>
         </section>
 
-        {/* ── Planned modules ─────────────────────────────────────────── */}
         <section aria-labelledby="planned-heading">
           <h2 id="planned-heading" className="mb-3 text-label font-semibold tracking-wide text-ink-muted uppercase">
             Planned

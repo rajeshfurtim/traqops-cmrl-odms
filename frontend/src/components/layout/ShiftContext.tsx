@@ -10,7 +10,6 @@ const STATUS: Record<ShiftStatus, { label: string; tone: StatusTone; text: strin
 }
 
 interface ShiftContextProps {
-  /** `full` — two lines with label; `compact` — dot + time range. */
   variant?: 'full' | 'compact'
   className?: string
 }

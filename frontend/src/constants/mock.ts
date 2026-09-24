@@ -1,7 +1,3 @@
-/*
- * Minimal mock data for the application shell.
- * Replace with the authenticated session once the backend exists.
- */
 import type { AppNotification, Shift, Station, User } from '@/types'
 
 export const MOCK_STATION: Station = {

@@ -7,7 +7,6 @@ interface SearchTriggerProps {
   className?: string
 }
 
-/** Header search field. Opens the global search dialog. */
 export function SearchTrigger({ className = '' }: SearchTriggerProps) {
   const { openSearch, searchOpen } = useShell()
 
@@ -24,7 +23,7 @@ export function SearchTrigger({ className = '' }: SearchTriggerProps) {
       <span className="flex-1 truncate">
         Search<span className="hidden @[10rem]:inline"> ODMS</span>…
       </span>
-      {/* Shortcut hint only when the field has room for it */}
+
       <span aria-hidden className="hidden shrink-0 gap-1 @[14rem]:flex">
         <Kbd>{MOD_KEY}</Kbd>
         <Kbd>K</Kbd>

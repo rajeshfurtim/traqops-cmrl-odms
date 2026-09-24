@@ -1,7 +1,3 @@
-/*
- * Example diaries for the mock data layer: the last 8 days at the session's station.
- * Times are generated relative to "now" so the current shift always looks live.
- */
 import { MOCK_SHIFT, MOCK_STATION, MOCK_USER } from '@/constants/mock'
 import { SHIFT_ORDER, SHIFTS } from '../constants'
 import type { DiaryEntry, DiaryTask, Person, ShiftCode, ShiftDiary } from '../types'
@@ -9,7 +5,6 @@ import { addDays, shiftId, toISODate } from '../utils'
 
 export const CURRENT_USER: Person = { name: MOCK_USER.name, employeeId: MOCK_USER.employeeId }
 
-/** Controllers the current one can hand over to. */
 export const STAFF: Person[] = [
   { name: 'R. Arun', employeeId: 'EMP-18820' },
   { name: 'V. Ganesh', employeeId: 'EMP-19954' },

@@ -9,12 +9,6 @@ import { SidebarBrand } from './Brand'
 
 export const SIDEBAR_NAV_ID = 'primary-navigation'
 
-/**
- * Persistent sidebar for tablet (icon rail) and desktop (collapsible). Hidden on mobile.
- *
- * Always-dark CMRL navy (`bg-nav`). The `.on-dark` class re-maps the standard tokens for
- * everything inside, so child components keep using their normal classes.
- */
 export function Sidebar() {
   const { sidebarCollapsed: collapsed, sidebarCollapsible, toggleSidebar } = useShell()
   const ToggleIcon = collapsed ? PanelLeftOpen : PanelLeftClose
@@ -27,7 +21,6 @@ export function Sidebar() {
       aria-label="Sidebar"
       className={`on-dark sticky top-0 z-20 hidden h-dvh shrink-0 flex-col overflow-hidden border-r border-border bg-nav transition-[width] duration-200 ease-(--ease-standard) md:flex ${width}`}
     >
-      {/* ── Brand header ─────────────────────────────────────────────── */}
       <div className="relative h-topbar-lg shrink-0 border-b border-border">
         <Link
           to="/dashboard"
@@ -38,7 +31,6 @@ export function Sidebar() {
         </Link>
       </div>
 
-      {/* ── Navigation ───────────────────────────────────────────────── */}
       <nav
         id={SIDEBAR_NAV_ID}
         aria-label="Main navigation"
@@ -49,7 +41,6 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* ── Collapse control ─────────────────────────────────────────── */}
       {sidebarCollapsible && (
         <div className="shrink-0 border-t border-border p-3">
           <Tooltip content={toggleLabel} shortcut="[" side="right" disabled={!collapsed} describe={false}>

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-/** Current timestamp, refreshed on an interval while the component is mounted. */
 export function useNow(intervalMs = 60_000): number {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {

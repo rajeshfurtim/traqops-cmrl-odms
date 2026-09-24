@@ -19,7 +19,6 @@ function Spans({ spans }: { spans: RichSpan[] }) {
   })
 }
 
-/** Renders diary markup (**bold**, _italic_, bullets, numbered lines). Never injects HTML. */
 export function RichText({ text, className = '' }: { text: string; className?: string }) {
   const blocks = parseRichText(text)
   return (

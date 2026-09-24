@@ -1,14 +1,8 @@
 import cmrlFullLogo from '@/assets/cmrl-full-logo.png'
 import cmrlLogo from '@/assets/cmrl-logo.png'
 
-/**
- * The CMRL artwork is pure blue, which is illegible on dark backgrounds (dark theme,
- * navy sidebar). There it is shown reversed (solid white), the standard treatment for a
- * single-colour logo. Replace with official reversed artwork when available.
- */
 const REVERSED_IN_DARK = 'dark:brightness-0 dark:invert'
 
-/** CMRL roundel. Decorative by default — pass `alt` when it stands alone. */
 export function BrandMark({ alt = '', className = '' }: { alt?: string; className?: string }) {
   return (
     <img
@@ -45,7 +39,6 @@ export function BrandLockup({
 export function SidebarBrand({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <div className="relative flex h-full min-w-0 flex-1 items-center justify-center overflow-hidden">
-      {/* Full lockup — visible when expanded */}
       <img
         src={cmrlFullLogo}
         alt="Chennai Metro Rail Limited"
@@ -54,7 +47,6 @@ export function SidebarBrand({ collapsed = false }: { collapsed?: boolean }) {
         draggable={false}
         className={`h-12 w-auto max-w-none shrink-0 transition-opacity duration-150 select-none ${REVERSED_IN_DARK} ${collapsed ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
       />
-      {/* Roundel only — visible when collapsed */}
       <img
         src={cmrlLogo}
         alt=""

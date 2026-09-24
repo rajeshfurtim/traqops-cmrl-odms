@@ -14,7 +14,7 @@ export type ExportScope = 'shift' | 'day' | 'range'
 interface ExportPdfDialogProps {
   open: boolean
   onClose: () => void
-  /** Shift for the "This shift" and "Whole day" choices. */
+
   diary?: ShiftDiary
   defaultScope: ExportScope
   defaultRange: { from: string; to: string }
@@ -59,7 +59,6 @@ function ScopeOption({
 export function ExportPdfDialog({ open, onClose, diary, defaultScope, defaultRange }: ExportPdfDialogProps) {
   return (
     <Modal open={open} onClose={onClose} size="xl" title="Export Station Diary as PDF">
-      {/* Remount per opening so choices reset to the caller's defaults */}
       {open && <ExportBody diary={diary} defaultScope={defaultScope} defaultRange={defaultRange} onDone={onClose} />}
     </Modal>
   )

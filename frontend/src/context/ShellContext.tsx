@@ -8,9 +8,9 @@ export type ShellLayout = 'mobile' | 'tablet' | 'desktop'
 
 interface ShellContextValue {
   layout: ShellLayout
-  /** Effective sidebar state. Always collapsed (rail) on tablet. */
+
   sidebarCollapsed: boolean
-  /** Whether the user can toggle the sidebar at the current size. */
+
   sidebarCollapsible: boolean
   toggleSidebar: () => void
   drawerOpen: boolean
@@ -29,7 +29,6 @@ export function ShellProvider({ children }: { children: ReactNode }) {
   const isXl = useMediaQuery(MEDIA.xl)
   const layout: ShellLayout = !isMd ? 'mobile' : !isLg ? 'tablet' : 'desktop'
 
-  // null = no explicit choice yet: expanded on wide screens, rail below 1280px.
   const [collapsedPref, setCollapsedPref] = useLocalStorage<boolean | null>('odms.sidebar.collapsed', null)
   const sidebarCollapsible = layout === 'desktop'
   const sidebarCollapsed = layout === 'tablet' ? true : (collapsedPref ?? !isXl)
@@ -40,10 +39,9 @@ export function ShellProvider({ children }: { children: ReactNode }) {
 
   const [drawerRequested, setDrawerOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  // The drawer only exists below desktop; it closes itself if the viewport grows.
+
   const drawerOpen = drawerRequested && layout !== 'desktop'
 
-  // Global shortcuts: ⌘K / Ctrl+K or "/" for search, "[" to toggle the sidebar.
   const toggleRef = useRef(toggleSidebar)
   useEffect(() => {
     toggleRef.current = toggleSidebar

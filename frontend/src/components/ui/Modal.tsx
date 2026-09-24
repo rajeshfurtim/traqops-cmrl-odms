@@ -11,7 +11,6 @@ const SIZES: Record<ModalSize, string> = {
   xl: 'md:w-[min(72rem,calc(100vw-4rem))]',
 }
 
-// Full screen on mobile, centered panel from tablet up (same pattern as global search).
 const BASE =
   'odms-dialog m-0 h-dvh max-h-none w-screen max-w-none flex-col overflow-hidden bg-surface-raised text-ink open:flex md:m-auto md:h-fit md:max-h-[min(52rem,90vh)] md:rounded-xl md:border md:border-border md:shadow-overlay'
 

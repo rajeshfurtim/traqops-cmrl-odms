@@ -1,6 +1,5 @@
 import type { InputHTMLAttributes, LabelHTMLAttributes, Ref, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react'
 
-/** Shared look for text inputs, selects and textareas. */
 const FIELD =
   'rounded-md border border-border-strong bg-surface px-2.5 text-body text-ink shadow-xs transition-colors placeholder:text-ink-disabled hover:border-ink-disabled focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-primary/25 disabled:opacity-60'
 

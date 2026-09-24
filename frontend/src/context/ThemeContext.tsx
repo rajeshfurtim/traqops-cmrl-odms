@@ -10,9 +10,8 @@ import {
 } from '@/utils/theme'
 
 interface ThemeContextValue {
-  /** What the user chose. */
   preference: ThemePreference
-  /** What is actually shown. */
+
   theme: ResolvedTheme
   setPreference: (preference: ThemePreference) => void
 }
@@ -29,7 +28,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme(resolveTheme(next))
   }, [])
 
-  // Follow the OS setting live while on "system".
   useEffect(() => {
     if (preference !== 'system') return
     return subscribeToSystemTheme(() => setTheme(resolveTheme('system')))

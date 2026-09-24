@@ -8,10 +8,6 @@ import { MobileDrawer } from './MobileDrawer'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 
-/**
- * Application frame shared by every ODMS module:
- * sidebar (tablet/desktop) · topbar · main content · drawer (mobile/tablet) · global search.
- */
 export function AppShell() {
   return (
     <SessionProvider>

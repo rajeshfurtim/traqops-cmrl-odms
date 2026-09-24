@@ -7,14 +7,9 @@ import { NAV_ITEMS } from '@/constants/navigation'
 import { ALL_SCOPE_ID, SEARCH_SCOPES, type SearchScope } from '@/constants/search'
 import { useShell } from '@/context/ShellContext'
 
-/**
- * Global search. Full-screen on mobile, centered dialog from tablet up.
- * Page navigation works today; record search is UI-only until modules expose data.
- */
-// Full screen on mobile
 const DIALOG_MOBILE =
   'odms-dialog m-0 h-dvh max-h-none w-screen max-w-none flex-col overflow-hidden bg-surface-raised open:flex'
-// Centered dialog from tablet up
+
 const DIALOG_DESKTOP =
   'md:mx-auto md:mt-[12vh] md:h-auto md:max-h-[min(37.5rem,76vh)] md:w-[min(40rem,calc(100vw-4rem))] md:rounded-xl md:border md:border-border md:shadow-overlay'
 
@@ -27,7 +22,6 @@ export function GlobalSearch() {
       aria-label="Search ODMS"
       className={`${DIALOG_MOBILE} ${DIALOG_DESKTOP}`}
     >
-      {/* Mount content only while open so each search starts fresh */}
       {searchOpen && <SearchPanel onClose={closeSearch} />}
     </Dialog>
   )
@@ -160,7 +154,6 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <>
-      {/* Query */}
       <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border pr-2 pl-4 md:h-15 md:pr-4">
         <Search aria-hidden className="size-5 shrink-0 text-ink-muted" strokeWidth={2} />
         <input
@@ -196,7 +189,6 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
         </button>
       </div>
 
-      {/* Scope */}
       <div
         role="radiogroup"
         aria-label="Search in"
@@ -226,7 +218,6 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
         })}
       </div>
 
-      {/* Results */}
       <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-2">
         {options.length === 0 ? (
           <div className="px-4 py-10 text-center">
@@ -261,7 +252,6 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
         {notice}
       </div>
 
-      {/* Keyboard hints */}
       <div
         aria-hidden
         className="hidden h-10 shrink-0 items-center gap-4 border-t border-border bg-canvas px-4 text-caption text-ink-muted md:flex"

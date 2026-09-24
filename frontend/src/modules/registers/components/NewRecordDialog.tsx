@@ -12,11 +12,10 @@ interface NewRecordDialogProps {
   onCreated: (record: RegisterRecord) => void
   raisedBy: string
   initialValues?: Record<string, string>
-  /** Set when raised from a diary entry; shown as the source. */
+
   source?: { entryId: string; label: string }
 }
 
-/** Entry form generated from the register's field definitions. */
 export function NewRecordDialog(props: NewRecordDialogProps) {
   return (
     <Modal

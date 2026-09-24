@@ -41,12 +41,10 @@ export function SummaryTableSheet({
       aria-label={`Shift Summary Register, ${formatFormDate(from)} to ${formatFormDate(to)}`}
       className="relative isolate flex w-full max-w-[56rem] flex-col gap-2.5 overflow-hidden border border-paper-line/70 bg-paper p-4 text-[0.6875rem] leading-snug text-paper-ink shadow-sm sm:p-5"
     >
-      {/* CMRL roundel watermark, faint and centered behind content */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 grid place-items-center">
         <img src={logo} alt="" className="w-1/2 max-w-80 opacity-[0.06]" />
       </div>
 
-      {/* Official Header Table */}
       <table className="w-full border-collapse border border-paper-line">
         <tbody>
           <tr>
@@ -75,7 +73,6 @@ export function SummaryTableSheet({
         </tbody>
       </table>
 
-      {/* Filter & Metadata Block */}
       <table className="w-full border-collapse border border-paper-line">
         <tbody>
           <tr>
@@ -95,7 +92,6 @@ export function SummaryTableSheet({
         </tbody>
       </table>
 
-      {/* Summary Data Table */}
       <table className="w-full border-collapse border border-paper-line">
         <thead>
           <tr className="bg-paper-head text-[0.6875rem] font-semibold">
@@ -148,7 +144,6 @@ export function SummaryTableSheet({
         </tbody>
       </table>
 
-      {/* Official Footer */}
       <div className="flex items-center justify-between border-t border-paper-line pt-2 text-[0.5625rem] text-paper-muted">
         <span>
           Generated from ODMS by {generatedBy.name} ({generatedBy.employeeId}) · Official Station Operations Register

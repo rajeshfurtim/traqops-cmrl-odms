@@ -7,12 +7,12 @@ const BASE =
 
 export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   icon: LucideIcon
-  /** Accessible name. Also shown as the tooltip. */
+
   label: string
-  /** Tooltip placement, or `false` to hide it. */
+
   tooltip?: TooltipSide | false
   shortcut?: string
-  /** Numeric badge (e.g. unread count). Hidden when 0. */
+
   badge?: number
   active?: boolean
   ref?: Ref<HTMLButtonElement>

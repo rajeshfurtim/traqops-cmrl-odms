@@ -16,10 +16,10 @@ const KIND: Record<NotificationKind, { icon: LucideIcon; className: string }> = 
 
 const PANEL =
   'odms-pop z-40 flex flex-col overflow-hidden rounded-lg border border-border bg-surface-raised shadow-overlay outline-none'
-// Mobile: full-width sheet under the header
+
 const PANEL_MOBILE =
   'fixed inset-x-2 top-[calc(var(--spacing-topbar)+0.25rem)] max-h-[calc(100dvh-var(--spacing-topbar)-1rem)]'
-// Tablet and up: popover anchored to the bell
+
 const PANEL_DESKTOP =
   'md:absolute md:inset-x-auto md:top-full md:right-0 md:mt-2 md:w-95 md:max-h-[min(35rem,calc(100dvh-6rem))]'
 

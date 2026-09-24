@@ -5,7 +5,6 @@ import type { RegisterRecord } from '../types'
 
 const ITEM = 'flex items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-secondary transition-colors'
 
-/** Register list grouped by category, with open-record counts. */
 export function RegisterNav({ records }: { records: RegisterRecord[] }) {
   const openCount = (id: string) => records.filter((r) => r.registerId === id && r.status !== 'closed').length
   return (

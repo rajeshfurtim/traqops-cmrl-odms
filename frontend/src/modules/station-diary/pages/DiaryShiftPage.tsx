@@ -17,10 +17,6 @@ import { useDiaries } from '../data/diaryStore'
 import { useActor, useCurrentDiaryId } from '../hooks'
 import { addDays, compareDiariesAsc, formatLongDate, shiftLabel } from '../utils'
 
-/**
- * One shift's diary. `/station-diary` opens the controller's current shift;
- * `/station-diary/shifts/:shiftId` opens any other shift read-only.
- */
 export default function DiaryShiftPage() {
   const { shiftId } = useParams()
   const currentId = useCurrentDiaryId()

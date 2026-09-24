@@ -14,7 +14,6 @@ interface RecordPanelProps {
   actor: string
 }
 
-/** Everything about one record: its fields, status workflow and full history. */
 export function RecordPanel({ register, record, actor }: RecordPanelProps) {
   const ids = useId()
   const next = NEXT_STATUSES[record.status]

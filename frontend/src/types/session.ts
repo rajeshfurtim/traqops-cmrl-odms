@@ -10,7 +10,7 @@ export type ShiftCode = 'A' | 'B' | 'C' | 'G'
 
 export interface Shift {
   code: ShiftCode
-  /** 24-hour "HH:mm" */
+
   start: string
   end: string
   status: ShiftStatus

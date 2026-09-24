@@ -2,11 +2,10 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-r
 import { Button } from './Button'
 
 interface PaginationProps {
-  /** Zero-based. */
   page: number
   pageCount: number
   onChange: (page: number) => void
-  /** Show « First and Last » (booklet-style paging). */
+
   withEnds?: boolean
   className?: string
 }

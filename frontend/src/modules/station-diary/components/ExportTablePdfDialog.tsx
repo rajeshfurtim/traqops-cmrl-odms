@@ -61,7 +61,6 @@ export function ExportTablePdfDialog({
   return (
     <Modal open={open} onClose={onClose} size="xl" title="Export Shift Summary Table as PDF">
       <div className="grid min-h-0 md:grid-cols-[19rem_minmax(0,1fr)]">
-        {/* Left Options / Info Panel */}
         <div className="flex flex-col gap-5 border-b border-border p-5 md:border-r md:border-b-0">
           <div className="flex flex-col gap-1.5 text-secondary">
             <span className="text-label text-ink-muted uppercase">Template Format</span>
@@ -127,7 +126,6 @@ export function ExportTablePdfDialog({
           </p>
         </div>
 
-        {/* Right Live Template Preview */}
         <div className="max-h-[75vh] min-w-0 overflow-y-auto bg-muted p-4 sm:p-6">
           <div className="flex flex-col items-center">
             <SummaryTableSheet

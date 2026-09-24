@@ -10,10 +10,6 @@ export interface Session {
 
 const SessionContext = createContext<Session | null>(null)
 
-/**
- * Who is operating, from which station, on which shift.
- * Currently mock data; the provider is the single seam for real authentication later.
- */
 export function SessionProvider({ children }: { children: ReactNode }) {
   return (
     <SessionContext.Provider value={{ user: MOCK_USER, station: MOCK_STATION, shift: MOCK_SHIFT }}>

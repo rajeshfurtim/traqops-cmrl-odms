@@ -1,9 +1,3 @@
-/*
- * Diary entries use a small, predictable markup instead of HTML, so the same text
- * renders safely on screen and in the PDF:
- *   **bold**   _italic_   "- " bullet line   "1. " numbered line
- */
-
 export interface RichSpan {
   text: string
   bold?: boolean
@@ -15,8 +9,6 @@ export type RichBlock =
   | { type: 'bullet'; spans: RichSpan[] }
   | { type: 'numbered'; marker: string; spans: RichSpan[] }
 
-// Bold: **text**. Italic: _text_, not inside a word and not touching another underscore, so "__" blanks and
-// snake_case stay literal. Markers must hug the text (no leading/trailing spaces).
 const INLINE = /(\*\*(?=\S)[^*]+?(?<=\S)\*\*|(?<![_\p{L}\p{N}])_(?=\S)[^_]+?(?<=\S)_(?![_\p{L}\p{N}]))/gu
 const ITALIC_ONLY = /^_(?=\S)[^_]+(?<=\S)_$/u
 const BOLD_ONLY = /^\*\*(?=\S)[^*]+(?<=\S)\*\*$/u

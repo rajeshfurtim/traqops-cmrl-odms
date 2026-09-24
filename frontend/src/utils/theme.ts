@@ -1,7 +1,6 @@
 export type ThemePreference = 'light' | 'dark' | 'system'
 export type ResolvedTheme = 'light' | 'dark'
 
-/** Keep in sync with the inline script in index.html. */
 export const THEME_STORAGE_KEY = 'odms.theme'
 
 const DARK_QUERY = '(prefers-color-scheme: dark)'
@@ -10,18 +9,14 @@ export function readThemePreference(): ThemePreference {
   try {
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY)
     if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
-  } catch {
-    // Storage unavailable: fall through to the default.
-  }
+  } catch {}
   return 'light'
 }
 
 export function writeThemePreference(preference: ThemePreference) {
   try {
     window.localStorage.setItem(THEME_STORAGE_KEY, preference)
-  } catch {
-    // Keep the in-memory choice only.
-  }
+  } catch {}
 }
 
 export function systemPrefersDark(): boolean {
@@ -39,7 +34,6 @@ export function subscribeToSystemTheme(onChange: () => void): () => void {
   return () => media.removeEventListener('change', onChange)
 }
 
-/** Applies the theme to <html> without animating every color change. */
 export function applyTheme(theme: ResolvedTheme) {
   const root = document.documentElement
   if (root.dataset.theme === theme) return

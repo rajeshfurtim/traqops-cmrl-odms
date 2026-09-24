@@ -8,7 +8,6 @@ function resolveCrumb(match: Match): Crumb | undefined {
   return typeof crumb === 'function' ? crumb(match.params) : crumb
 }
 
-/** Builds the breadcrumb trail from `handle.crumb` on the matched routes. */
 export function useBreadcrumbs(): Crumb[] {
   return useMatches().flatMap((match) => {
     const crumb = resolveCrumb(match)
@@ -16,7 +15,6 @@ export function useBreadcrumbs(): Crumb[] {
   })
 }
 
-/** Title for the current route: last `handle.title`, else last crumb. */
 export function useRouteTitle(): string | undefined {
   const matches = useMatches()
   for (let i = matches.length - 1; i >= 0; i--) {

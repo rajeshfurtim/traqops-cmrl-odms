@@ -17,7 +17,6 @@ interface SegmentedControlProps<T extends string> {
 const SEGMENT =
   'inline-flex h-7 items-center gap-1.5 rounded-[0.3125rem] px-2.5 text-secondary font-medium transition-colors duration-150'
 
-/** Small exclusive toggle, e.g. Table / Booklet. */
 export function SegmentedControl<T extends string>({
   value,
   options,

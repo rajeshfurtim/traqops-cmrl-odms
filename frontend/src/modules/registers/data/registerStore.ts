@@ -1,7 +1,3 @@
-/*
- * Registers data layer. In-memory mock shaped like the future API, same pattern as the
- * Station Diary store. Records are never deleted; every change is added to their history.
- */
 import { useSyncExternalStore } from 'react'
 import { MOCK_STATION } from '@/constants/mock'
 import { getRegister, STATUS_LABELS } from '../definitions'

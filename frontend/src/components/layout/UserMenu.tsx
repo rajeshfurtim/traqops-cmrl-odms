@@ -21,11 +21,10 @@ interface MenuAction {
   label: string
   icon: LucideIcon
   tone?: 'danger'
-  /** Start a new section above this item. */
+
   separated?: boolean
 }
 
-// UI placeholders — wired up when profile, preferences and auth exist.
 const ACTIONS: MenuAction[] = [
   { id: 'profile', label: 'Profile', icon: UserRound },
   { id: 'preferences', label: 'Preferences', icon: SlidersHorizontal },

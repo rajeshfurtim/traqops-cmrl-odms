@@ -1,8 +1,3 @@
-/*
- * Bridge between the WYSIWYG editor (TipTap) and the diary's stored markup (see richText.ts).
- * Entries are always stored as markup, so the timeline, booklet, PDF, drafts and hot keys stay unchanged;
- * the editor only changes how text looks while it's typed.
- */
 import type { JSONContent } from '@tiptap/react'
 import { parseRichText, type RichSpan } from './richText'
 

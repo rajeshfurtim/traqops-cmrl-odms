@@ -9,7 +9,6 @@ const TABS = [
   { to: '/station-diary/summary', label: 'Shift Summary', icon: Rows3, end: false },
 ]
 
-/** Sub-navigation shared by the Station Diary pages. */
 export function DiaryTabs() {
   return (
     <nav aria-label="Station Diary" className="mb-5 flex gap-6 border-b border-border">

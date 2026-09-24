@@ -15,7 +15,6 @@ interface HandoverDialogProps {
   onClose: () => void
 }
 
-/** Shift summary check, then sign-off. The diary locks once submitted. */
 export function HandoverDialog({ diary, actor, open, onClose }: HandoverDialogProps) {
   const [incomingId, setIncomingId] = useState('')
   const [confirmed, setConfirmed] = useState(false)

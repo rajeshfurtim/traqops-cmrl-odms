@@ -12,7 +12,6 @@ export const SHIFTS: Record<ShiftCode, { label: string; start: string; end: stri
   C: { label: 'Shift C', start: '22:00', end: '06:00' },
 }
 
-/** Order shifts appear in within a day. */
 export const SHIFT_ORDER: ShiftCode[] = ['A', 'G', 'B', 'C']
 
 export const STATUS_LABELS: Record<DiaryStatus, string> = {
@@ -44,11 +43,10 @@ export const TASK_STATUS_TONES: Record<TaskStatus, BadgeTone> = {
 export interface HotKey {
   id: string
   label: string
-  /** Inserted into the editor; "__" marks blanks to fill. */
+
   template: string
 }
 
-/** Hot keys every station starts with; controllers add their own from the diary. */
 export const DEFAULT_HOT_KEYS: HotKey[] = [
   {
     id: 'bank',

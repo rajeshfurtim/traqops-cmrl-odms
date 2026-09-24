@@ -1,16 +1,10 @@
-/*
- * Official Station Diary form (CMRL/OPER/SO/F-01) as a real PDF.
- * Mirrors components/DiaryFormSheet.tsx, which shows the same layout on screen.
- * Only loaded when someone exports, so react-pdf never weighs down the diary itself.
- */
 import { Document, Font, Image, Page, Polygon, StyleSheet, Svg, Text, View } from '@react-pdf/renderer'
 import logo from '@/assets/cmrl-logo.png'
 import { FORM_DATE, FORM_NUMBER, FORM_REVISION, STATUS_LABELS } from '../constants'
 import { parseRichText, type RichSpan } from '../richText'
 import type { Person, ShiftDiary } from '../types'
 import { diaryReference, formatFormDate, formatStamp, formatStampSeconds, sortEntriesAsc } from '../utils'
-// Inter from the @fontsource/inter npm package (free, SIL OFL 1.1). react-pdf can embed WOFF but not WOFF2.
-// The Latin file covers normal text; the Latin Extended file supplies ₹ (react-pdf falls back per glyph).
+
 import latinItalic from '@fontsource/inter/files/inter-latin-400-italic.woff'
 import latinRegular from '@fontsource/inter/files/inter-latin-400-normal.woff'
 import latinSemiBold from '@fontsource/inter/files/inter-latin-600-normal.woff'
@@ -28,7 +22,6 @@ Font.register({
 })
 Font.registerHyphenationCallback((word) => [word])
 
-// PDF colours mirror the --color-paper-* tokens in styles/index.css.
 const INK = '#1f2937'
 const MUTED = '#6b7280'
 const LINE = '#9ca3af'
@@ -61,7 +54,7 @@ const s = StyleSheet.create({
   small: { fontSize: 7.5, color: MUTED },
   section: { fontSize: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.4, marginBottom: 3 },
   sign: { fontStyle: 'italic', fontSize: 11, color: SIGN },
-  // CMRL roundel, faint and centred behind the content on every page.
+
   watermark: {
     position: 'absolute',
     top: 0,
@@ -107,7 +100,6 @@ function Spans({ spans }: { spans: RichSpan[] }) {
   ))
 }
 
-/** Drawn, not typed: the ★ glyph isn't in Inter's Latin files. */
 function Star() {
   return (
     <Svg viewBox="0 0 24 24" style={{ width: 8, height: 8, marginTop: 1.5, marginRight: 3 }}>

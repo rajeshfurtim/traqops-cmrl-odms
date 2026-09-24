@@ -15,7 +15,7 @@ const TONES: Record<BadgeTone, string> = {
 interface BadgeProps {
   children: ReactNode
   tone?: BadgeTone
-  /** Leading status dot (status tones only). */
+
   dot?: boolean
   className?: string
 }

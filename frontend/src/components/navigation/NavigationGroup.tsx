@@ -6,7 +6,7 @@ interface NavigationGroupProps {
   group: NavGroup
   collapsed?: boolean
   density?: SidebarItemDensity
-  /** Hide the separator shown in collapsed mode (first group). */
+
   isFirst?: boolean
   onNavigate?: () => void
 }

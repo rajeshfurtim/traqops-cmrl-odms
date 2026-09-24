@@ -41,14 +41,13 @@ interface DiaryTimelineProps {
   diary: ShiftDiary
   previousId?: string
   nextId?: string
-  /** The signed-in controller's open shift: entries can be edited, deleted, followed up and raise records. */
+
   editable: boolean
   actor: Person
 }
 
 type Pending = { kind: 'delete' | 'follow-up'; entry: DiaryEntry } | null
 
-/** Entries of one shift, newest first, with an importance filter and per-entry actions. */
 export function DiaryTimeline({ diary, previousId, nextId, editable, actor }: DiaryTimelineProps) {
   const [filter, setFilter] = useState<Filter>('all')
   const [editingId, setEditingId] = useState<string>()
@@ -59,11 +58,10 @@ export function DiaryTimeline({ diary, previousId, nextId, editable, actor }: Di
     return filter === 'important' ? list.filter((e) => e.important) : list
   }, [diary.entries, filter])
 
-  // Entries with an open follow-up are pinned to the top and highlighted until the follow-up is closed.
   const openFollowUpIds = new Set(diary.followUps.filter((f) => !f.done).map((f) => f.id))
   const pinned = entries.filter((e) => e.followUpId && openFollowUpIds.has(e.followUpId))
   const rest = entries.filter((e) => !pinned.includes(e))
-  // Follow-ups carried from the previous shift have no entry here; they sit in the same band.
+
   const carried = filter === 'all' ? diary.followUps.filter((f) => !f.done && !f.entryId) : []
   const openCount = carried.length + pinned.length
   const close = (followUpId: string) => closeFollowUp(diary.id, followUpId, actor)
@@ -90,7 +88,6 @@ export function DiaryTimeline({ diary, previousId, nextId, editable, actor }: Di
     />
   )
 
-  // Only the controller's own entries on the open shift; entries recorded by ODMS stay as they are.
   const canManage = (entry: DiaryEntry) => editable && !entry.system && entry.author.employeeId === actor.employeeId
 
   return (

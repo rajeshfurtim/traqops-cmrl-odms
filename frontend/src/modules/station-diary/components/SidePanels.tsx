@@ -9,7 +9,7 @@ import { formatStamp } from '../utils'
 interface PanelProps {
   diary: ShiftDiary
   actor: Person
-  /** False once the shift is handed over. */
+
   editable: boolean
 }
 
@@ -37,7 +37,6 @@ export function TasksPanel({ diary, actor, editable }: PanelProps) {
                     : 'bg-gradient-to-br from-info-subtle/70 to-surface'
               }`}
             >
-              {/* Decorative watermark icon */}
               <div className="pointer-events-none absolute -top-3 -right-3 opacity-[0.04]">
                 {isCircular ? <AlertCircle className="size-24" /> : <CheckCircle className="size-24" />}
               </div>

@@ -59,7 +59,6 @@ export function DiaryFormSheet({
       aria-label={`Station Diary, ${formatFormDate(diary.date)}, Shift ${diary.shift}`}
       className="relative isolate flex w-full max-w-[51.25rem] flex-col gap-2 overflow-hidden border border-paper-line/60 bg-paper px-4 py-4 text-[0.6875rem] leading-snug text-paper-ink shadow-sm sm:px-5"
     >
-      {/* CMRL roundel watermark, as on the printed form */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 grid place-items-center">
         <img src={logo} alt="" className="w-1/2 max-w-80 opacity-[0.06]" />
       </div>

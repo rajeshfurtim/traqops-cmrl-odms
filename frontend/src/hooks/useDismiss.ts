@@ -2,7 +2,6 @@ import { useEffect, useRef, type RefObject } from 'react'
 
 export type DismissReason = 'escape' | 'outside'
 
-/** Closes a non-modal popover on Escape or on a pointer press outside the given elements. */
 export function useDismiss(
   active: boolean,
   onDismiss: (reason: DismissReason) => void,
