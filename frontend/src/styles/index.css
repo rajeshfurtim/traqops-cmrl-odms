@@ -441,3 +441,42 @@
     }
   }
 }
+
+/* Print styles for official CMRL reports and documents */
+@media print {
+  aside,
+  header.sticky,
+  .skip-link,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 10pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  main,
+  #main-content,
+  #main-content > div {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}

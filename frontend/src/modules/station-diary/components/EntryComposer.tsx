@@ -174,9 +174,9 @@ export function EntryComposer({ diary, actor }: EntryComposerProps) {
           <Star aria-hidden className={`size-3.5 ${important ? 'fill-warning-dot text-warning-dot' : ''}`} />
           Important
         </label>
-        {/* <p aria-live="polite" title={notice} className="min-w-0 flex-1 truncate text-caption text-ink-muted">
+        <p aria-live="polite" title={notice} className="min-w-0 flex-1 truncate text-caption text-ink-muted">
           {notice}
-        </p> */}
+        </p>
         <span className="text-secondary whitespace-nowrap text-ink-muted tabular-nums">
           Logging at <span className="font-semibold text-ink">{stamp}</span>
         </span>
