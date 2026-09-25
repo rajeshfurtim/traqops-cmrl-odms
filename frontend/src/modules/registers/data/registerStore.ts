@@ -118,6 +118,127 @@ let records: RegisterRecord[] = [
   },
 ]
 
+// A fuller Occurrence Log, so exports show paging and period filters on realistic data.
+const OCCURRENCES: [hours: number, summary: string, location: string, type: string, details: string, by: string][] = [
+  [
+    9,
+    'Unattended bag on platform',
+    'Platform 2, zone 4',
+    'Security',
+    'Area cordoned; owner traced by CCTV and bag returned after check.',
+    'R. Arun',
+  ],
+  [
+    22,
+    'Train held 4 min for door fault',
+    'Platform 1',
+    'Operations',
+    'OCC informed; door isolated and train cleared.',
+    'Employee Name',
+  ],
+  [
+    31,
+    'Child separated from parent',
+    'Concourse, unpaid side',
+    'Passenger',
+    'Announcement made; reunited within 10 minutes.',
+    'M. Kavitha',
+  ],
+  [
+    47,
+    'Passenger slipped on wet floor',
+    'Entry B stairs',
+    'Passenger',
+    'First aid given; housekeeping called and caution board placed.',
+    'R. Arun',
+  ],
+  [
+    58,
+    'Crowd build-up after event',
+    'Entry A',
+    'Operations',
+    'Extra AFC gate opened; queue controlled by security staff.',
+    'Employee Name',
+  ],
+  [
+    70,
+    'Argument at ticket counter',
+    'Ticket counter 2',
+    'Security',
+    'Security intervened; passenger issued a ticket and left.',
+    'M. Kavitha',
+  ],
+  [
+    95,
+    'Stray dog inside paid area',
+    'Concourse, paid side',
+    'Other',
+    'Guided out through Entry C by housekeeping.',
+    'R. Arun',
+  ],
+  [
+    118,
+    'Passenger trapped in lift L1',
+    'Entry A lift',
+    'Passenger',
+    'Released in 6 minutes by lift technician; no injury.',
+    'Employee Name',
+  ],
+  [
+    140,
+    'Fire alarm, false trigger',
+    'Staff room',
+    'Operations',
+    'Checked by SC and fire team; detector reset.',
+    'M. Kavitha',
+  ],
+  [
+    165,
+    'Suspicious person reported',
+    'Parking',
+    'Security',
+    'Checked by security; nothing found. Police informed as a precaution.',
+    'R. Arun',
+  ],
+  [
+    190,
+    'Power dip, lights flickered',
+    'Station-wide',
+    'Operations',
+    'Normal in 2 minutes; E&M informed.',
+    'Employee Name',
+  ],
+  [
+    214,
+    'Lost senior citizen assisted',
+    'Entry C',
+    'Passenger',
+    'Contacted family; waited in SC room until pickup.',
+    'M. Kavitha',
+  ],
+]
+
+records = [
+  ...records,
+  ...OCCURRENCES.map(([h, summary, location, type, details, by], i): RegisterRecord => {
+    const n = 87 - i
+    const closed = h > 30
+    return {
+      id: `occ-${n}`,
+      registerId: 'occurrence-log',
+      ref: ref('OCC', n),
+      values: { summary, location, type, details },
+      status: closed ? 'closed' : 'open',
+      raisedAt: hoursAgo(h),
+      raisedBy: by,
+      history: [
+        { at: hoursAgo(h), by, text: 'Raised.' },
+        ...(closed ? [{ at: hoursAgo(h - 1), by, text: 'Status changed to Closed. Action complete.' }] : []),
+      ],
+    }
+  }),
+]
+
 const counters: Record<string, number> = { EQP: 142, OCC: 89, SAF: 32, FDR: 12, KEY: 57, CMP: 205, LNF: 413 }
 const listeners = new Set<() => void>()
 

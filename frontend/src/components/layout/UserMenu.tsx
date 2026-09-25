@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { Avatar } from '@/components/ui/Avatar'
+import { DEMO_ROLES } from '@/constants/mock'
 import { useSession } from '@/context/SessionContext'
 import { useTheme } from '@/context/ThemeContext'
 import { useDismiss } from '@/hooks/useDismiss'
@@ -44,7 +45,7 @@ const MENU_ITEM =
   'flex h-11 w-full items-center gap-3 rounded-md px-2.5 text-body font-medium transition-colors outline-none hover:bg-subtle focus-visible:bg-subtle md:h-9'
 
 export function UserMenu() {
-  const { user, station } = useSession()
+  const { user, station, setDemoRole } = useSession()
   const { preference, setPreference } = useTheme()
   const [open, setOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -165,6 +166,29 @@ export function UserMenu() {
                   >
                     <Icon aria-hidden className="size-4" strokeWidth={1.75} />
                     {option.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+          <div role="group" aria-labelledby={`${menuId}-role`} className="border-b border-border px-3.5 py-3">
+            <p id={`${menuId}-role`} className="mb-2 text-caption font-medium text-ink-muted">
+              Role (demo)
+            </p>
+            <div className="grid grid-cols-2 gap-1 rounded-lg bg-canvas p-1">
+              {DEMO_ROLES.map((role) => {
+                const selected = user.role === role
+                return (
+                  <button
+                    key={role}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={selected}
+                    tabIndex={-1}
+                    onClick={() => setDemoRole(role)}
+                    className={`${THEME_OPTION} ${selected ? 'bg-surface-raised text-ink shadow-sm' : 'text-ink-muted hover:bg-subtle hover:text-ink'}`}
+                  >
+                    {role.replace('Station ', '')}
                   </button>
                 )
               })}

@@ -442,8 +442,21 @@
   }
 }
 
+/* Shared report export (src/export): the print sheet is hidden on screen, and alone on paper while printing */
+.odms-print-root {
+  display: none;
+}
+
 /* Print styles for official CMRL reports and documents */
 @media print {
+  html.odms-printing body > :not(.odms-print-root) {
+    display: none !important;
+  }
+
+  html.odms-printing .odms-print-root {
+    display: block;
+  }
+
   aside,
   header.sticky,
   .skip-link,

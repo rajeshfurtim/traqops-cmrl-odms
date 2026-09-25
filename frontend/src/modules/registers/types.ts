@@ -1,3 +1,5 @@
+import type { FixedHeader, HeaderContent } from '@/export'
+
 export type RegisterCategory = 'operational' | 'safety' | 'equipment' | 'passenger'
 
 export type RecordStatus = 'open' | 'in-progress' | 'pending-verification' | 'closed'
@@ -24,6 +26,12 @@ export interface RegisterDefinition {
   fields: RegisterField[]
 
   titleField: string
+
+  /**
+   * Opts the register into the shared export (Copy · CSV · Excel · PDF · Print). `header` is fixed in code;
+   * users can only change the subtitle and department, starting from `defaultHeader`.
+   */
+  report?: { header?: FixedHeader; defaultHeader?: Partial<HeaderContent> }
 }
 
 export interface RecordEvent {

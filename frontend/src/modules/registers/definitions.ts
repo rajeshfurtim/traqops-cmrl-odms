@@ -55,6 +55,11 @@ export const REGISTERS: RegisterDefinition[] = [
       },
       { key: 'details', label: 'Details & action taken', type: 'textarea', required: true },
     ],
+    // Add the official formRef / revision / issueDate to `header` once CMRL confirms them.
+    report: {
+      header: { orientation: 'landscape' },
+      defaultHeader: { subtitle: 'Station Operations Register', department: 'Operations & Maintenance' },
+    },
   },
   {
     id: 'safety-inspection',

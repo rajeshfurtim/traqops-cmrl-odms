@@ -19,6 +19,9 @@ export const MOCK_USER: User = {
   role: 'Station Controller',
 }
 
+/** Roles the demo session can switch between (user menu), to try permission-controlled features. */
+export const DEMO_ROLES = ['Station Controller', 'Station Supervisor'] as const
+
 const minutesAgo = (minutes: number) => new Date(Date.now() - minutes * 60_000)
 
 export const MOCK_NOTIFICATIONS: AppNotification[] = [

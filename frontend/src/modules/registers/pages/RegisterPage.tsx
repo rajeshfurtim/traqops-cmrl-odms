@@ -6,9 +6,10 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { Input } from '@/components/ui/Field'
+import { Input, Label } from '@/components/ui/Field'
 import { Pagination } from '@/components/ui/Pagination'
 import { useSession } from '@/context/SessionContext'
+import { ExportActions, toISODate } from '@/export'
 import { getDiaryEntry, linkRegisterRecord } from '@/modules/station-diary/data/diaryStore'
 import { toPlainText } from '@/modules/station-diary/richText'
 import { formatDateTime } from '@/utils/format'
@@ -17,6 +18,7 @@ import { RecordPanel } from '../components/RecordPanel'
 import { RegisterNav } from '../components/RegisterNav'
 import { useRecords } from '../data/registerStore'
 import { CATEGORIES, getRegister, STATUS_LABELS, STATUS_TONES } from '../definitions'
+import { registerReport } from '../report'
 import type { RecordStatus, RegisterDefinition } from '../types'
 
 type StatusFilter = 'active' | RecordStatus | 'all'
@@ -55,6 +57,8 @@ export default function RegisterPage() {
   const recordRef = params.get('record')
   const [filter, setFilter] = useState<StatusFilter>(() => (recordRef ? 'all' : 'active'))
   const [query, setQuery] = useState('')
+  const [from, setFrom] = useState('')
+  const [to, setTo] = useState('')
   const [page, setPage] = useState(0)
   const [selectedId, setSelectedId] = useState<string>()
   const [manualOpen, setManualOpen] = useState(false)
@@ -72,10 +76,12 @@ export default function RegisterPage() {
     return records.filter(
       (r) =>
         r.registerId === register.id &&
+        (!from || toISODate(new Date(r.raisedAt)) >= from) &&
+        (!to || toISODate(new Date(r.raisedAt)) <= to) &&
         (filter === 'all' || (filter === 'active' ? r.status !== 'closed' : r.status === filter)) &&
         (!q || [r.ref, ...Object.values(r.values)].some((v) => v.toLowerCase().includes(q))),
     )
-  }, [records, register, filter, query])
+  }, [records, register, filter, query, from, to])
 
   if (!register) {
     return (
@@ -164,6 +170,50 @@ export default function RegisterPage() {
                   className="w-full pl-8"
                 />
               </div>
+            </div>
+
+            <div className="flex flex-wrap items-end gap-3 border-b border-border px-4 py-2.5">
+              <div className="flex flex-col gap-1">
+                <Label htmlFor={`${ids}-from`}>Raised from</Label>
+                <Input
+                  id={`${ids}-from`}
+                  type="date"
+                  fieldSize="sm"
+                  value={from}
+                  max={to || undefined}
+                  onChange={(e) => {
+                    setFrom(e.target.value)
+                    setPage(0)
+                  }}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <Label htmlFor={`${ids}-to`}>to</Label>
+                <Input
+                  id={`${ids}-to`}
+                  type="date"
+                  fieldSize="sm"
+                  value={to}
+                  min={from || undefined}
+                  onChange={(e) => {
+                    setTo(e.target.value)
+                    setPage(0)
+                  }}
+                />
+              </div>
+              {register.report && (
+                <ExportActions
+                  className="ml-auto"
+                  report={registerReport(register)}
+                  rows={rows}
+                  rowKey={(r) => r.id}
+                  period={{ from: from || undefined, to: to || undefined }}
+                  filters={[
+                    { label: 'Status', value: FILTERS.find((f) => f.value === filter)?.label ?? 'All' },
+                    ...(query.trim() ? [{ label: 'Search', value: `“${query.trim()}”` }] : []),
+                  ]}
+                />
+              )}
             </div>
 
             {rows.length === 0 ? (

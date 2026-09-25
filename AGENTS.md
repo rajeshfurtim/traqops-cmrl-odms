@@ -58,6 +58,7 @@ frontend/src/
 │   └── registers/      pages/ components/ data/ definitions.ts types.ts
 ├── constants/      navigation.ts (sidebar + search), mock.ts (session), search.ts
 ├── context/        SessionContext (user/station/shift), ShellContext, ThemeContext
+├── export/         shared Copy/CSV/Excel/PDF/Print + configurable report headers (see frontend/README.md)
 ├── hooks/ pages/ types/ utils/
 └── styles/index.css   design tokens (the only source of colours, type sizes, radii, shadows)
 ```
@@ -147,6 +148,13 @@ frontend/src/
   retention). The table, form and record panel are generated from it. Records are never deleted. Status goes
   Open → In progress → Pending verification → Closed, closing needs a remark, and every change goes into history.
   "Create register entry" on a diary entry opens the register picker, pre-fills the form and links both ways.
+- **Export (new registers and modules):** use the shared `src/export/` component (`ExportActions` + a
+  `ReportDefinition`): Copy, CSV, Excel, PDF, Print. **Shift Summary and Station Diary keep their own exports; don't
+  migrate them.** In report headers users may change **only Layout (Standard / Compact), Register title, Subtitle and
+  Department / section** (register default +
+  optional station override, versioned, placeholders only, no HTML). Everything else on the header is common and fixed
+  on every document; don't add more editable fields without asking.
+  Every export shows the template version it used. Signature boxes are a later enhancement.
 
 ## Adding a module (checklist)
 
