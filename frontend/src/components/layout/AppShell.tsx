@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import { GlobalSearch } from '@/components/search/GlobalSearch'
+import { Loader } from '@/components/ui/Loader'
 import { SessionProvider } from '@/context/SessionContext'
 import { ShellProvider } from '@/context/ShellContext'
 import { useRouteTitle } from '@/hooks/useBreadcrumbs'
@@ -52,7 +53,9 @@ function MainContent() {
   return (
     <main ref={mainRef} id="main-content" tabIndex={-1} className="flex-1 outline-none">
       <div className="mx-auto w-full max-w-content px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-        <Outlet />
+        <Suspense fallback={<Loader size="lg" label="Loading…" className="py-20" />}>
+          <Outlet />
+        </Suspense>
       </div>
     </main>
   )

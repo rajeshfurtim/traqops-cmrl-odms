@@ -1,4 +1,4 @@
-import { BookOpen, Check, Copy, Download, FileSpreadsheet, FileText, Printer, Table2 } from 'lucide-react'
+import { BookOpen, Check, Copy, FileSpreadsheet, FileText, Printer, Table2 } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PageHeader } from '@/components/layout/PageHeader'
@@ -116,23 +116,19 @@ export default function ShiftSummaryPage() {
           title="Shift Summary"
           description={`All shift diaries for ${all[0]?.stationName ?? 'this station'} · Station Shift Diary Register`}
           actions={
-            <>
-              <SegmentedControl
-                label="Display mode"
-                value={mode}
-                onChange={(m) => {
-                  setMode(m)
-                  setPage(0)
-                }}
-                options={[
-                  { value: 'table', label: 'Table', icon: Table2 },
-                  { value: 'booklet', label: 'Booklet view', icon: BookOpen },
-                ]}
-              />
-              <Button variant="primary" icon={Download} onClick={() => setExportFor({})}>
-                Export PDF
-              </Button>
-            </>
+            <SegmentedControl
+              variant="header"
+              label="Display mode"
+              value={mode}
+              onChange={(m) => {
+                setMode(m)
+                setPage(0)
+              }}
+              options={[
+                { value: 'table', label: 'Table', icon: Table2 },
+                { value: 'booklet', label: 'Booklet view', icon: BookOpen },
+              ]}
+            />
           }
         />
         <DiaryTabs />

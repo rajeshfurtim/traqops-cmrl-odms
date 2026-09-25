@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
+import { Loader } from '@/components/ui/Loader'
 import DashboardPage from '@/pages/DashboardPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 import RouteErrorPage from '@/pages/RouteErrorPage'
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <AppShell />,
+    hydrateFallbackElement: <Loader fullscreen size="xl" label="Loading ODMS…" />,
     errorElement: <RouteErrorPage />,
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
