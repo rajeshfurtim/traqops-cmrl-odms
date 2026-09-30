@@ -1,5 +1,5 @@
+import { useMemo } from 'react'
 import { useSession } from '@/context/SessionContext'
-import { CURRENT_USER } from './data/seed'
 import type { Person } from './types'
 import { shiftId, toISODate } from './utils'
 
@@ -10,5 +10,5 @@ export function useCurrentDiaryId(): string {
 
 export function useActor(): Person {
   const { user } = useSession()
-  return user.employeeId === CURRENT_USER.employeeId ? CURRENT_USER : { name: user.name, employeeId: user.employeeId }
+  return useMemo(() => ({ name: user.name, employeeId: user.employeeId }), [user.name, user.employeeId])
 }

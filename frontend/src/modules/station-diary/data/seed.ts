@@ -1,25 +1,37 @@
-import { MOCK_SHIFT, MOCK_STATION, MOCK_USER } from '@/constants/mock'
+import type { Station } from '@/types'
 import { SHIFT_ORDER, SHIFTS } from '../constants'
 import type { DiaryEntry, DiaryTask, Person, ShiftCode, ShiftDiary } from '../types'
 import { addDays, shiftId, toISODate } from '../utils'
 
-export const CURRENT_USER: Person = { name: MOCK_USER.name, employeeId: MOCK_USER.employeeId }
-
 export const STAFF: Person[] = [
-  { name: 'R. Arun', employeeId: 'EMP-18820' },
+  { name: 'K. Suresh', employeeId: 'EMP-18820' },
   { name: 'V. Ganesh', employeeId: 'EMP-19954' },
   { name: 'M. Kavitha', employeeId: 'EMP-21133' },
   { name: 'S. Priya', employeeId: 'EMP-20988' },
 ]
 
+/** Who usually works each shift. The signed-in controller replaces the rostered person on their own shift. */
 const ROSTER: Record<ShiftCode, Person> = {
   A: STAFF[0],
   G: STAFF[2],
-  B: CURRENT_USER,
+  B: STAFF[3],
   C: STAFF[1],
 }
 
 const NEXT_SHIFT: Record<ShiftCode, ShiftCode> = { A: 'B', B: 'C', C: 'A', G: 'G' }
+const PREVIOUS_SHIFT: Record<ShiftCode, ShiftCode> = { A: 'C', B: 'A', C: 'B', G: 'G' }
+
+
+export interface SeedSession {
+  station: Station
+  controller: Person
+  shift: ShiftCode
+}
+
+interface SeedContext {
+  station: Station
+  roster: Record<ShiftCode, Person>
+}
 
 const LINES: { text: string; important?: boolean }[] = [
   { text: 'Opening checks completed. All AFC gates and TVMs working.' },
@@ -85,16 +97,16 @@ function circular(status: DiaryTask['status'], dueDate: string): DiaryTask {
   }
 }
 
-function pastDiary(date: string, shift: ShiftCode, seed: number): ShiftDiary {
-  const person = ROSTER[shift]
+function pastDiary(ctx: SeedContext, date: string, shift: ShiftCode, seed: number): ShiftDiary {
+  const person = ctx.roster[shift]
   const { start, end } = SHIFTS[shift]
   const endDate = shift === 'C' ? addDays(date, 1) : date
   // A → B → C → next day's A; the general shift (G) closes its own diary.
-  const next = ROSTER[NEXT_SHIFT[shift]]
+  const next = ctx.roster[NEXT_SHIFT[shift]]
   return {
-    id: shiftId(MOCK_STATION.code, date, shift),
-    stationCode: MOCK_STATION.code,
-    stationName: MOCK_STATION.name,
+    id: shiftId(ctx.station.code, date, shift),
+    stationCode: ctx.station.code,
+    stationName: ctx.station.name,
     date,
     shift,
     status: 'submitted',
@@ -113,13 +125,14 @@ function pastDiary(date: string, shift: ShiftCode, seed: number): ShiftDiary {
   }
 }
 
-function currentDiary(date: string, shift: ShiftCode): ShiftDiary {
+function currentDiary(ctx: SeedContext, date: string, shift: ShiftCode): ShiftDiary {
   const now = Date.now()
   // Spread the example entries between sign-in and now (falls back to the last 3 hours before the shift starts).
   const shiftStart = new Date(at(date, SHIFTS[shift].start, 2)).getTime()
   const start = shiftStart < now - 30 * 60_000 ? shiftStart : now - 178 * 60_000
   const ago = (minutes: number) => new Date(start + (1 - minutes / 178) * (now - start)).toISOString()
-  const person = CURRENT_USER
+  const person = ctx.roster[shift]
+  const previous = shift === 'G' ? undefined : ctx.roster[PREVIOUS_SHIFT[shift]]
   const entry = (minutes: number, text: string, important = false, system = false) => ({
     id: nextId('e'),
     at: ago(minutes),
@@ -129,16 +142,23 @@ function currentDiary(date: string, shift: ShiftCode): ShiftDiary {
     system,
   })
   return {
-    id: shiftId(MOCK_STATION.code, date, shift),
-    stationCode: MOCK_STATION.code,
-    stationName: MOCK_STATION.name,
+    id: shiftId(ctx.station.code, date, shift),
+    stationCode: ctx.station.code,
+    stationName: ctx.station.name,
     date,
     shift,
     status: 'in-progress',
     controller: person,
     signInAt: ago(178),
     entries: [
-      entry(176, `${SHIFTS[shift].label} taken over from R. Arun (EMP-18820). 1 follow-up carried.`, false, true),
+      entry(
+        176,
+        `${SHIFTS[shift].label} taken over` +
+          (previous ? ` from ${previous.name} (${previous.employeeId})` : '') +
+          '. 1 follow-up carried.',
+        false,
+        true,
+      ),
       entry(160, 'Instruction received from OCC: headway increased to 7 min due to depot movement.'),
       entry(128, 'Lift L2 stopped at ground floor. Maintenance informed; no one trapped.'),
       entry(
@@ -172,11 +192,11 @@ function currentDiary(date: string, shift: ShiftCode): ShiftDiary {
   }
 }
 
-function emptyDiary(date: string, shift: ShiftCode, status: 'upcoming' | 'no-attendance'): ShiftDiary {
+function emptyDiary(ctx: SeedContext, date: string, shift: ShiftCode, status: 'upcoming' | 'no-attendance'): ShiftDiary {
   return {
-    id: shiftId(MOCK_STATION.code, date, shift),
-    stationCode: MOCK_STATION.code,
-    stationName: MOCK_STATION.name,
+    id: shiftId(ctx.station.code, date, shift),
+    stationCode: ctx.station.code,
+    stationName: ctx.station.name,
     date,
     shift,
     status,
@@ -200,20 +220,21 @@ function stillRunning(diary: ShiftDiary): ShiftDiary {
   }
 }
 
-export function createSeed(): ShiftDiary[] {
+/** Demo history for the signed-in controller: earlier shifts handed over, their own shift open, later ones upcoming. */
+export function createSeed({ station, controller, shift: current }: SeedSession): ShiftDiary[] {
+  const ctx: SeedContext = { station, roster: { ...ROSTER, [current]: controller } }
   const today = toISODate(new Date())
-  const current = MOCK_SHIFT.code
   const diaries: ShiftDiary[] = []
   for (let back = 7; back >= 0; back--) {
     const date = addDays(today, -back)
     SHIFT_ORDER.forEach((shift, i) => {
       const seed = back * 4 + i
-      if (back === 0 && shift === current) diaries.push(currentDiary(date, shift))
+      if (back === 0 && shift === current) diaries.push(currentDiary(ctx, date, shift))
       else if (back === 0 && SHIFT_ORDER.indexOf(shift) > SHIFT_ORDER.indexOf(current))
-        diaries.push(emptyDiary(date, shift, 'upcoming'))
-      else if (back === 1 && shift === 'C') diaries.push(emptyDiary(date, shift, 'no-attendance'))
-      else if (back === 0) diaries.push(stillRunning(pastDiary(date, shift, seed)))
-      else diaries.push(pastDiary(date, shift, seed))
+        diaries.push(emptyDiary(ctx, date, shift, 'upcoming'))
+      else if (back === 1 && shift === 'C') diaries.push(emptyDiary(ctx, date, shift, 'no-attendance'))
+      else if (back === 0) diaries.push(stillRunning(pastDiary(ctx, date, shift, seed)))
+      else diaries.push(pastDiary(ctx, date, shift, seed))
     })
   }
   return diaries

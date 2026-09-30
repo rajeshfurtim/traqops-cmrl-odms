@@ -1,4 +1,4 @@
-import type { AppNotification, Shift, Station, User } from '@/types'
+import type { AppNotification, Station, User } from '@/types'
 
 export const MOCK_STATION: Station = {
   name: 'Central Square Station',
@@ -6,18 +6,21 @@ export const MOCK_STATION: Station = {
   code: 'CEN01',
 }
 
-export const MOCK_SHIFT: Shift = {
-  code: 'B',
-  start: '14:00',
-  end: '22:00',
-  status: 'active',
-}
-
 export const MOCK_USER: User = {
   name: 'Employee Name',
   employeeId: 'EMP-20417',
   role: 'Station Controller',
 }
+
+/** Demo sign-in accounts until the backend exists. Never ship real credentials here. */
+export const MOCK_ACCOUNTS: { user: User; station: Station; password: string }[] = [
+  { user: MOCK_USER, station: MOCK_STATION, password: 'Odms@2026' },
+  {
+    user: { name: 'R. Arun', employeeId: 'EMP-10032', role: 'Station Supervisor' },
+    station: MOCK_STATION,
+    password: 'Odms@2026',
+  },
+]
 
 /** Roles the demo session can switch between (user menu), to try permission-controlled features. */
 export const DEMO_ROLES = ['Station Controller', 'Station Supervisor'] as const
