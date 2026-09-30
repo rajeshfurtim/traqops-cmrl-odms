@@ -1,8 +1,11 @@
 import type { ComponentType } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { GuestOnly, RequireAuth } from '@/auth/RequireAuth'
 import { AppShell } from '@/components/layout/AppShell'
 import { Loader } from '@/components/ui/Loader'
 import DashboardPage from '@/pages/DashboardPage'
+import ForgotPasswordPage from '@/pages/ForgotPasswordPage'
+import LoginPage from '@/pages/LoginPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 import RouteErrorPage from '@/pages/RouteErrorPage'
 import { getRegister } from '@/modules/registers/definitions'
@@ -14,8 +17,30 @@ const page = (load: () => Promise<{ default: ComponentType }>) => async () => ({
 
 export const router = createBrowserRouter([
   {
+    path: '/login',
+    element: (
+      <GuestOnly>
+        <LoginPage />
+      </GuestOnly>
+    ),
+    errorElement: <RouteErrorPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: (
+      <GuestOnly>
+        <ForgotPasswordPage />
+      </GuestOnly>
+    ),
+    errorElement: <RouteErrorPage />,
+  },
+  {
     path: '/',
-    element: <AppShell />,
+    element: (
+      <RequireAuth>
+        <AppShell />
+      </RequireAuth>
+    ),
     hydrateFallbackElement: <Loader fullscreen size="xl" label="Loading ODMS…" />,
     errorElement: <RouteErrorPage />,
     children: [

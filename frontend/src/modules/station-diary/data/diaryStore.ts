@@ -1,11 +1,28 @@
 import { useSyncExternalStore } from 'react'
+import { getAuthSession, subscribeToAuth } from '@/auth/authStore'
 import { DEFAULT_HOT_KEYS, HOT_KEY_NAME_MAX, TASK_STATUS_LABELS, type HotKey } from '../constants'
 import type { Attachment, DiaryEntry, Person, ShiftDiary, TaskStatus } from '../types'
 import { createSeed } from './seed'
 
-let diaries: ShiftDiary[] = createSeed()
+let diaries: ShiftDiary[] = []
+let seededFor = ''
 let pnCounter = 118
 const listeners = new Set<() => void>()
+
+function seedForSession(): boolean {
+  const auth = getAuthSession()
+  const key = auth ? `${auth.station.code}/${auth.user.employeeId}/${auth.shiftCode}` : ''
+  if (!auth || key === seededFor) return false
+  seededFor = key
+  const controller = { name: auth.user.name, employeeId: auth.user.employeeId }
+  diaries = createSeed({ station: auth.station, controller, shift: auth.shiftCode })
+  return true
+}
+
+seedForSession()
+subscribeToAuth(() => {
+  if (seedForSession()) listeners.forEach((listener) => listener())
+})
 
 function subscribe(listener: () => void) {
   listeners.add(listener)

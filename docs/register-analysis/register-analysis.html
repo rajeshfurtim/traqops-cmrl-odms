@@ -1,0 +1,669 @@
+<title>ODMS Register Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#0f172a; --ink2:#334155; --muted:#556176; --line:rgba(17,24,39,.12); --line2:rgba(17,24,39,.22);
+  --navy:#12305f; --navy-ink:#12305f; --navy-soft:#e6ecf5; --yel:#f5b700; --yel-soft:#fff5cc; --on-yel:#1b1400;
+  --warn:#8a5a00; --warn-soft:#fff3d6; --bad:#b12218; --bad-soft:#fdeceb; --good:#0b6b3a; --good-soft:#e4f6ec; --info:#1d4f91; --info-soft:#e8f0fb;
+  --code:#eef2f8;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  color-scheme:dark; --bg:#0b1220; --surface:#121b2e; --ink:#e6ecf6; --ink2:#c3cddd; --muted:#95a3ba; --line:rgba(255,255,255,.1); --line2:rgba(255,255,255,.2);
+  --navy:#8fb3f0; --navy-ink:#b3cbf6; --navy-soft:#16284a; --yel-soft:#2a2204; --warn:#fcd34d; --warn-soft:#2a2104; --bad:#fca5a5; --bad-soft:#3a1414; --good:#6ee7b7; --good-soft:#0f2e22; --info:#93c5fd; --info-soft:#12264a; --code:#1a2540;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark; --bg:#0b1220; --surface:#121b2e; --ink:#e6ecf6; --ink2:#c3cddd; --muted:#95a3ba; --line:rgba(255,255,255,.1); --line2:rgba(255,255,255,.2);
+  --navy:#8fb3f0; --navy-ink:#b3cbf6; --navy-soft:#16284a; --yel-soft:#2a2204; --warn:#fcd34d; --warn-soft:#2a2104; --bad:#fca5a5; --bad-soft:#3a1414; --good:#6ee7b7; --good-soft:#0f2e22; --info:#93c5fd; --info-soft:#12264a; --code:#1a2540;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;padding-inline:16px}
+h1,h2,h3{font-family:Manrope,Inter,system-ui,sans-serif;text-wrap:balance;margin:0;letter-spacing:-.01em}
+a{color:var(--navy-ink)}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:.86em}
+code{background:var(--code);padding:1px 5px;border-radius:3px}
+.wrap{max-width:1200px;margin:0 auto;padding-block:24px 64px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:32px}
+@media (max-width:980px){.wrap{grid-template-columns:minmax(0,1fr)}.toc{display:none}}
+/* header */
+.mast{grid-column:1/-1;background:#0e1f3d;color:#fff;border-left:8px solid var(--yel);border-radius:8px;padding:24px 28px;display:flex;flex-direction:column;gap:10px}
+.mast .eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--yel)}
+.mast h1{font-size:30px;font-weight:800}
+.mast p{margin:0;color:rgba(255,255,255,.86);max-width:75ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;border:1px solid var(--line2);color:var(--ink2);background:var(--surface);white-space:nowrap}
+.mast .chip{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff}
+.chip.yel{background:var(--yel);border-color:var(--yel);color:var(--on-yel)}
+/* toc */
+.toc{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;max-height:100vh;overflow:auto;padding-block:8px;font-size:13px}
+.toc p{margin:12px 0 4px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.toc a{display:block;padding:3px 8px;border-radius:4px;text-decoration:none;color:var(--ink2)}
+.toc a:hover{background:var(--navy-soft);color:var(--navy-ink)}
+.toc .n{display:inline-block;width:22px;color:var(--muted);font-variant-numeric:tabular-nums}
+main{display:flex;flex-direction:column;gap:36px;min-width:0}
+section.part{display:flex;flex-direction:column;gap:14px}
+section.part>h2{font-size:22px;font-weight:800;padding-bottom:8px;border-bottom:2px solid var(--line2)}
+section.part>p,.lead{margin:0;color:var(--ink2);max-width:80ch}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.find{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:6px;border:1px solid var(--line);background:var(--surface)}
+.find .tag{flex:none;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:3px;padding:2px 7px;margin-top:2px}
+.tag.bad{background:var(--bad-soft);color:var(--bad)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.info{background:var(--info-soft);color:var(--info)} .tag.good{background:var(--good-soft);color:var(--good)}
+.find p{margin:0}
+.find b{color:var(--ink)}
+ul.tight{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+/* tables */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{background:var(--navy-soft);color:var(--navy-ink);font-weight:700;font-size:12px;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;color:var(--muted)}
+/* register cards */
+.reg{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;scroll-margin-top:16px}
+.reg header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.reg header .no{font-family:Manrope,sans-serif;font-weight:800;font-size:13px;color:var(--on-yel);background:var(--yel);border-radius:4px;padding:2px 8px;font-variant-numeric:tabular-nums}
+.reg header h3{font-size:18px;font-weight:800;flex:1 1 240px}
+.reg .purpose{margin:0;padding:12px 18px;color:var(--ink2);border-bottom:1px solid var(--line)}
+dl.facts{margin:0;display:grid;grid-template-columns:170px minmax(0,1fr)}
+dl.facts dt{padding:9px 18px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line)}
+dl.facts dd{margin:0;padding:9px 18px 9px 0;border-bottom:1px solid var(--line);color:var(--ink)}
+dl.facts dt:last-of-type,dl.facts dd:last-of-type{border-bottom:0}
+@media (max-width:640px){dl.facts{grid-template-columns:minmax(0,1fr)}dl.facts dt{border-bottom:0;padding-bottom:0}dl.facts dd{padding:2px 18px 10px}}
+.gap{color:var(--warn);font-weight:600}
+.flow{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}
+.flow span{background:var(--navy-soft);color:var(--navy-ink);border-radius:3px;padding:0 6px;font-size:12px;font-weight:600;white-space:nowrap}
+.flow i{font-style:normal;color:var(--muted)}
+.q{counter-increment:q;display:flex;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.q::before{content:counter(q);flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:var(--surface);display:grid;place-items:center;font-weight:700;font-size:13px}
+.qs{counter-reset:q;display:flex;flex-direction:column;gap:8px}
+.q p{margin:0}
+footer{grid-column:1/-1;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <span class="eyebrow">Discovery of the existing ODMS · For review — no development until confirmed</span>
+    <h1>ODMS Register Analysis</h1>
+    <p>Everything the current login can see in the existing CMRL ODMS, captured before the site is withdrawn: all 23 registers in detail, plus every other module, master and form. Business functionality only — the new ODMS will be redesigned.</p>
+    <div class="chips">
+      <span class="chip yel">16 modules · ~90 screens · 23 registers</span>
+      <span class="chip">Registers 25/09/2026 · whole app 28/09/2026</span>
+      <span class="chip">Account: Test – Phase-II · station STST</span>
+      <span class="chip">Read-only: nothing submitted, saved or deleted</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Contents">
+    <p>Overview</p>
+    <a href="#summary">Key findings</a>
+    <a href="#catalogue">Register catalogue</a>
+    <p>Train operations &amp; safety</p>
+    <a href="#r1"><span class="n">1</span>Caution Order</a>
+    <a href="#r21"><span class="n">21</span>TSR</a>
+    <a href="#r22"><span class="n">22</span>TSR Signaling</a>
+    <a href="#r20"><span class="n">20</span>Train Traffic Register</a>
+    <a href="#r19"><span class="n">19</span>Possession Register</a>
+    <a href="#r23"><span class="n">23</span>WGO Register</a>
+    <a href="#r16"><span class="n">16</span>Manual Point Operation</a>
+    <a href="#r14"><span class="n">14</span>Local Traffic Regulation</a>
+    <a href="#r6"><span class="n">6</span>Incident</a>
+    <a href="#r17"><span class="n">17</span>Mock Drill / Events</a>
+    <p>Station services</p>
+    <a href="#r4"><span class="n">4</span>Passenger Assistance</a>
+    <a href="#r5"><span class="n">5</span>Essential Equipment</a>
+    <a href="#r8"><span class="n">8</span>Key Register</a>
+    <a href="#r13"><span class="n">13</span>Parking (Long Halt)</a>
+    <a href="#r18"><span class="n">18</span>Station PD Management</a>
+    <a href="#r3"><span class="n">3</span>Cab Pass</a>
+    <a href="#r7"><span class="n">7</span>Imprest</a>
+    <a href="#r2"><span class="n">2</span>Assurance</a>
+    <p>Last Mile Connectivity</p>
+    <a href="#r9"><span class="n">9</span>LMC Asset Fault</a>
+    <a href="#r10"><span class="n">10</span>LMC Audit</a>
+    <a href="#r11"><span class="n">11</span>LMC Trip Sheet</a>
+    <a href="#r12"><span class="n">12</span>LMC Marketing Plan</a>
+    <a href="#r15"><span class="n">15</span>Metro Connect</a>
+    <p>Whole application</p>
+    <a href="#discovery">Modules &amp; reference data</a>
+    <a href="#access">Access with this login</a>
+    <a href="#completion">Completion pass</a>
+    <a href="#gaps">Gaps for full access</a>
+    <p>Consolidation</p>
+    <a href="#patterns">Common patterns</a>
+    <a href="#components">Reusable components</a>
+    <a href="#roles">Roles &amp; permissions</a>
+    <a href="#defects">Old-system defects</a>
+    <a href="#approach">Proposed approach</a>
+    <a href="#questions">Questions to confirm</a>
+  </nav>
+
+  <main>
+    <section class="part" id="summary">
+      <h2>Key findings</h2>
+      <div class="find"><span class="tag info">Scope</span><p><b>23 registers</b> in the menu. Three groups: <b>train operations &amp; safety</b> (10, several OCC- or department-driven), <b>station services</b> (8), and <b>Last Mile Connectivity</b> (5). They are not one kind of thing: some are simple station logs, others are multi-party permit workflows.</p></div>
+      <div class="find"><span class="tag good">Pattern</span><p>Almost every register uses the <b>same page shell</b>: title + station, KPI tiles that filter the table, a Filter panel, Copy/Excel/CSV/PDF/Print, a data table and row actions. Most records open as an <b>official CMRL form</b> (Doc no, Rev, Date) with a timeline, images and a "Sign &amp; metadata" block. These become shared components.</p></div>
+      <div class="find"><span class="tag good">Pattern</span><p><b>Official forms found:</b> Caution Order <code>CMRL/OPER/SO/F-43</code>, Passenger Assistance <code>F-33</code>, Manual Point <code>F-32</code>, Mock Drill <code>F-28</code>, Incident <code>CMRL/OPER/SO/R4</code>, OCC Event Report <code>DOC_OCC R-04</code>, TSR application (Special Instruction No. 07 to MRGR 2013). Assurance has an <b>ISO Document Setting</b> (document name, display name, ISO number, revision, date) — the same idea as our export header template.</p></div>
+      <div class="find"><span class="tag info">Whole app</span><p>The rest of the old system was captured too (28/09): Dashboard, Manuals, PN Book, Employee Operations, EPIC list, Lost &amp; Found, ~50 Masters, PTW, WGO, Customer Care, Station Diary and Asset — see <a href="#discovery">Whole-application discovery</a>. Five routes are 403 for this login and two crash with server errors.</p></div>
+      <div class="find"><span class="tag warn">Gap</span><p><b>Create forms were hidden for this account</b> on most registers (no Add button, or 403 "User does not have the right permissions"). I captured create forms fully only for <b>Incident</b> and <b>LMC Marketing</b>; for the rest, fields are inferred from columns and record views. An account with create/approve rights (or the paper forms) is needed to close this.</p></div>
+      <div class="find"><span class="tag warn">Login</span><p>The old login also asks for <b>Station</b> (56 options) and <b>Shift</b> after the employee ID. Our new login does not yet. Shift names also differ: register filters use <i>A, B, C, Evening, General</i> while ODMS uses <i>A, G, B, C</i>.</p></div>
+      <div class="find"><span class="tag bad">Security</span><p>The live site runs with <b>Laravel debug mode on</b>. Two pages (a guessed <code>/imprest/create</code> and the <b>Metro Connect</b> menu page, which crashes) showed source code, SQL queries and the session cookie. This should be reported to the old system's maintainers (<code>APP_DEBUG=false</code>). Signing out of cmrl-odms.com ends the exposed session.</p></div>
+    </section>
+
+    <section class="part" id="catalogue">
+      <h2>Register catalogue</h2>
+      <p>One line per register. "Entry by" is who creates records; "Form" is the official document the record prints as.</p>
+      <div class="tw"><table>
+        <thead><tr><th>#</th><th>Register</th><th>Purpose</th><th>Entry by</th><th>Workflow</th><th>Form</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td><a href="#r1">Caution Order</a></td><td>Speed/mode restrictions issued to each train</td><td>OCC/department raises; SC issues per train</td><td>Pending → Active → Completed / Expired / Frozen / Cancelled</td><td class="mono">F-43</td></tr>
+          <tr><td class="num">2</td><td><a href="#r2">Assurance</a></td><td>Staff read &amp; acknowledge manuals</td><td>Admin uploads; staff acknowledge</td><td>Assigned → Read (min. 5 s) → Acknowledged</td><td>ISO setting</td></tr>
+          <tr><td class="num">3</td><td><a href="#r3">Cab Pass</a></td><td>Passes to ride in the train cab</td><td>Department (EPIC) requests</td><td>Request → HOD → OP-HOD → Pass printed</td><td>Pass print</td></tr>
+          <tr><td class="num">4</td><td><a href="#r4">Passenger Assistance</a></td><td>Wheelchair, visually impaired, first aid, separated persons</td><td>SC/SI</td><td>Logged (revisions kept)</td><td class="mono">F-33</td></tr>
+          <tr><td class="num">5</td><td><a href="#r5">Essential Equipment</a></td><td>Weekly check of emergency equipment</td><td>SC</td><td>Weekly Working / Not working</td><td>Monthly sheet</td></tr>
+          <tr><td class="num">6</td><td><a href="#r6">Incident</a></td><td>Incidents by national class/sub-class</td><td>SC/SI</td><td>Reported (timeline, escalation)</td><td class="mono">R4</td></tr>
+          <tr><td class="num">7</td><td><a href="#r7">Imprest</a></td><td>Station petty cash</td><td>SC</td><td>Draft → Forwarded → Refill received → Completed</td><td>Invoice</td></tr>
+          <tr><td class="num">8</td><td><a href="#r8">Key Register</a></td><td>Issue and return of room keys</td><td>Staff request; SC approves</td><td>Takeover request → Issued → Handover request → Returned</td><td>—</td></tr>
+          <tr><td class="num">9</td><td><a href="#r9">LMC Asset Fault</a></td><td>Faults on feeder-service assets</td><td>SC raises; operator rectifies</td><td>Open → Attended → Rectified → Closed</td><td>—</td></tr>
+          <tr><td class="num">10</td><td><a href="#r10">LMC Audit</a></td><td>Audits of feeder services</td><td>SC / LMC staff</td><td>Logged</td><td>—</td></tr>
+          <tr><td class="num">11</td><td><a href="#r11">LMC Trip Sheet</a></td><td>Feeder trips, passengers, revenue per shift</td><td>SC/SI</td><td>Logged</td><td>—</td></tr>
+          <tr><td class="num">12</td><td><a href="#r12">LMC Marketing Plan</a></td><td>Marketing projects with members, tasks, logs</td><td>LMC manager</td><td>Not started → Active → …; tasks Assigned → Verified</td><td>—</td></tr>
+          <tr><td class="num">13</td><td><a href="#r13">Parking (Long Halt)</a></td><td>Vehicles parked long-term, charges</td><td>SC</td><td>Entry → Exit &amp; settlement</td><td>—</td></tr>
+          <tr><td class="num">14</td><td><a href="#r14">Local Traffic Regulation</a></td><td>Offer / take control with OCC</td><td>SC</td><td>OC / TC / Enforce TC logged with PNs</td><td>—</td></tr>
+          <tr><td class="num">15</td><td><a href="#r15">Metro Connect</a></td><td>Feeder bus trips and revenue</td><td>SC</td><td>Logged</td><td>—</td></tr>
+          <tr><td class="num">16</td><td><a href="#r16">Manual Point Operation</a></td><td>Manual operation of track points</td><td>SC</td><td>Released → Normalised (PNs, timeline)</td><td class="mono">F-32</td></tr>
+          <tr><td class="num">17</td><td><a href="#r17">Mock Drill / Events</a></td><td>Drills, events, pep talks</td><td>Safety officer schedules; SC executes</td><td>Scheduled → Executed → Under review → Approved</td><td class="mono">F-28</td></tr>
+          <tr><td class="num">18</td><td><a href="#r18">Station PD Management</a></td><td>Inspections of licensed shops</td><td>SC</td><td>Inspection, penalty if any</td><td>—</td></tr>
+          <tr><td class="num">19</td><td><a href="#r19">Possession Register</a></td><td>PTW permits (local and track)</td><td>PTW module</td><td>Request → Issued / Rejected → Extended → Cancel request → Cancelled</td><td>PTW</td></tr>
+          <tr><td class="num">20</td><td><a href="#r20">Train Traffic Register</a></td><td>OCC traffic events and punctuality loss</td><td>OCC</td><td>Pending → Finalised (locked)</td><td class="mono">DOC_OCC R-04</td></tr>
+          <tr><td class="num">21</td><td><a href="#r21">TSR</a></td><td>Temporary speed restrictions</td><td>Department requests; OCC implements</td><td>Pending → Implemented → Extended → Cancelled</td><td>TSR form</td></tr>
+          <tr><td class="num">22</td><td><a href="#r22">TSR Signaling</a></td><td>Signalling implementation/cancellation of TSR</td><td>Signaling dept</td><td>With Signaling → Implemented → Cancellation implemented</td><td>TSR form</td></tr>
+          <tr><td class="num">23</td><td><a href="#r23">WGO Register</a></td><td>Work Granting Orders on the line</td><td>Departments / OCC</td><td>Created → Approved (-APP) / Rejected (-REJ)</td><td>WGO</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="part" id="registers">
+      <h2>Registers in detail</h2>
+      <p>Each card uses the same headings. "Not seen" means the screen was hidden from this account; those items need confirming.</p>
+
+      <article class="reg" id="r1">
+        <header><span class="no">1</span><h3>Caution Order</h3><span class="chip">Train operations</span><span class="chip mono">CMRL/OPER/SO/F-43 · Rev 01</span></header>
+        <p class="purpose">Temporary restrictions (speed, mode, direction) between two stations, issued to every train set that runs through. The SC hands each train operator a copy and uploads the acknowledged copy.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>KPI tiles: Total, Completed, Active, Pending, Frozen, Cancelled, Pending cancel, Expired, Today orders, Today permits, Issued started. Columns: Order ID (<code>2026/0003/STST-SWD/OPN</code> = year/seq/from-to/dept), Date, From–To, Department, Trains (count and breakdown), Issued (count, train nos), Direction, Mode, Speed, Mast nos, Time (start / E.O.S), Reason, Status, Action.</dd>
+          <dt>Filters</dt><dd>Text; Direction (UP/DOWN/BOTH); Mode (ATO/ATP/CUT OUT/RM); Department (20); Issue progress (pending / all issued); Status; Date from–to; Speed min–max.</dd>
+          <dt>Create</dt><dd class="gap">Not at station level. Orders are raised centrally (OCC/department). Create form not seen.</dd>
+          <dt>View / print</dt><dd>Official form "Caution Order (Train Operator / SC copy)": date, ref no, form no (<code>2026/STST/00003</code>), train set no, instruction text with reason and department, validity (from time till End of Service), restrictions table (station from/to, line, direction, mast from/to, speed, permitted mode), OCC cancellation clause (via TETRA), issued by SC (name, emp no, time, signature), TO acknowledgement (name, emp no, time of receipt, signature). Print.</dd>
+          <dt>Workflow</dt><dd><span class="flow"><span>Pending</span><i>→</i><span>Active</span><i>→</i><span>Completed</span><i>/</i><span>Expired</span><i>/</i><span>Frozen</span><i>/</i><span>Pending cancel</span><i>→</i><span>Cancelled</span></span>. "Till End of Service" validity.</dd>
+          <dt>Actions</dt><dd>Per train set: issue + <b>upload signed copy</b>; "Completed" when every train is issued.</dd>
+          <dt>Attachments</dt><dd>Uploaded signed permit per train (Permits page: Issue date, Form no, Order ID, Train set, From–To, Dept, Upload status, Document).</dd>
+          <dt>Relationships</dt><dd>Masters › Mode of operations; Stations; Departments; Quick Links.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r21">
+        <header><span class="no">21</span><h3>TSR — Temporary Speed Restriction</h3><span class="chip">Train operations</span><span class="chip">SI No. 07 to MRGR 2013</span></header>
+        <p class="purpose">A department asks OCC to impose a temporary speed limit on track circuits between two masts; OCC implements, may extend, then cancels.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Tiles: Total requests, Pending, Implemented, Cancelled, Track circuits. Columns: TSR ID (<code>2026/09/00003/CIV</code>), Requested / Valid till, Validity, Track circuits (T125N, T127N), Location (station pair), Speed (km/h), Requestee, Designation, Department, On-duty TC, Status, View, Action.</dd>
+          <dt>Filters</dt><dd>Department, Designation, Reset; "View all departments".</dd>
+          <dt>Create</dt><dd class="gap">Request form not seen. Fields from the printed form below.</dd>
+          <dt>View / print</dt><dd>"Application form of TSR — Imposition": department, reason, corridor &amp; line, mast from/to, start/end station, requested date-time of implementation, expected date-time of cancellation, speed and track circuits, requestee name/designation/signature, <b>certifying authority TC/DC/SC OCC</b> (name, signature).</dd>
+          <dt>Workflow</dt><dd><span class="flow"><span>Pending</span><i>→</i><span>Implemented</span><i>→</i><span>Extension implemented</span><i>→</i><span>Cancelled</span></span></dd>
+          <dt>Relationships</dt><dd>TSR Signaling (#22), Masters › Track Circuit, Corridor &amp; Line.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r22">
+        <header><span class="no">22</span><h3>TSR Signaling</h3><span class="chip">Train operations</span></header>
+        <p class="purpose">The Signaling department's queue of TSRs that need action in the signalling system.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Columns: TSR ID, Imposed at, Valid till, Validity, Track circuits, Location, Speed, Designation, Department, On-duty TC, Status ("With Signaling"), View report, Action, Signaling user. Export Excel/PDF.</dd>
+          <dt>Actions</dt><dd><b>Implement cancellation</b> → "TSR Cancellation Implementation Form" (modal).</dd>
+          <dt>Workflow</dt><dd>Adds a signalling step to #21: implementation and cancellation are certified by a Signaling user.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r20">
+        <header><span class="no">20</span><h3>Train Traffic Register (TTM)</h3><span class="chip">OCC</span><span class="chip mono">ISO DOC_OCC R-04</span></header>
+        <p class="purpose">OCC's log of traffic events (failures, delays) with punctuality loss. Records are reviewed, then finalised and locked.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Two views with counters: <b>Finalized records</b> (locked, archived) and <b>Pending applications</b> (need review). Columns: ID (<code>2026/TTM/CIV/0017</code>), Date, Schedule (from–to), Location (up/down line), Event description with section, Report type (auto-generated), Edit control (Locked), View. Date from–to.</dd>
+          <dt>View / print</dt><dd>"OCC Event Report": title, location, track, target system, asset classification, subsystem, functional unit, start / duration / end, IMP scenario followed, narrative summary, <b>punctuality loss</b> per corridor section (trips up/down, totals), <b>timeline log</b> with standard steps (informed controller/JE, escalated to reporting officer and Operation HOD, informed train operator). "Print executive document report".</dd>
+          <dt>Workflow</dt><dd><span class="flow"><span>Pending</span><i>→</i><span>Finalised</span><i>→</i><span>Locked</span></span></dd>
+          <dt>Create</dt><dd class="gap">OCC entry screen not seen.</dd>
+          <dt>Relationships</dt><dd>Masters › Train Traffic Plans (IMP scenarios), Corridor &amp; Line, Trip route.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r19">
+        <header><span class="no">19</span><h3>Possession Register (Local &amp; Track)</h3><span class="chip">Train operations</span><span class="chip">PTW</span></header>
+        <p class="purpose">Register view of Permit To Work (PTW): who worked where, when the permit was issued, extended and cancelled. Local = station areas; Track = the line.</p>
+        <dl class="facts">
+          <dt>Local list</dt><dd>Tiles (filter the table): Total, Issued pending, Issued, Issue rejected, Cancel pending, Cancelled, Cancel rejected, Extension pending, Extended; by level (Concourse / Street / Platform); by work (Installation / Inspection / Maintenance / Repair). Columns: PTW no (<code>STST-L-00012</code>), EPIC name, Emp no, Designation, Department, Organisation, Persons, Work category, Station level, Description, Request from/to, Issue approved, Extension, Cancellation request, Cancellation approved (date, time each), SC/SI.</dd>
+          <dt>Track list</dt><dd>Tiles: Total, Live today, Closed today, Pending permits, Closed, Pending cancellations; Viaduct/Tunnel; Integrated block/Shadow power block; Planned/Unplanned; With/without engineer's possession. Columns add Permit no (<code>STST-T-00010</code>), Time granted, Permitted up to, Extension from/to, Time cancelled, <b>private numbers</b> for issue/cancel at same station, TC/TR and other station, <b>ER fixed/removed</b> by maintenance staff and by station, approved/rejected remarks.</dd>
+          <dt>Workflow</dt><dd><span class="flow"><span>Requested</span><i>→</i><span>Issued</span><i>/</i><span>Rejected</span><i>→</i><span>Extension</span><i>→</i><span>Cancel requested</span><i>→</i><span>Cancelled</span><i>/</i><span>Cancel rejected</span></span></dd>
+          <dt>Relationships</dt><dd>PTW module (Local / Track requests), EPIC list (contract workers), Private Number Book, Power block timing, Track circuit.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r23">
+        <header><span class="no">23</span><h3>WGO Register</h3><span class="chip">Train operations</span></header>
+        <p class="purpose">Work Granting Orders for department work on the line.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Columns: WGO no (<code>NOR_SIG/2026-09-06/0003</code> = mode_dept/date/seq; suffix <code>-APP</code> / <code>-REJ</code>), Mode (Normal / Emergency / Special), Subject (Maintenance / Inspection / Testing), Source, Destination, Department, Line, Work day, Status, Created. Select all · <b>Delete selected</b>.</dd>
+          <dt>Workflow</dt><dd><span class="flow"><span>Created</span><i>→</i><span>Approved</span><i>/</i><span>Rejected</span></span></dd>
+          <dt>Relationships</dt><dd>WGO module and its masters (access request, equipment/vehicle, lights, movement from, parking location, TVS fan status), Power block timing, Train parking induction.</dd>
+          <dt>Special rules</dt><dd>Old register shows raw IDs for source/destination/department and allows bulk delete — both to fix.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r16">
+        <header><span class="no">16</span><h3>Manual Point Operation</h3><span class="chip">Train operations</span><span class="chip mono">CMRL/OPER/SO/F-32 · Rev 02</span></header>
+        <p class="purpose">Station staff operate a set of points by hand; the release and normalisation are agreed with OCC by private number.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Columns: Date, Station, Emp ID, Point no, CHK, Released station PN, Released OCC PN, Normalised station PN, Normalised OCC PN, From, To, Time taken, Remarks, Action (View, ⋮).</dd>
+          <dt>Filters</dt><dd>Point no (master), CHK, Start/End date.</dd>
+          <dt>Create</dt><dd class="gap">"Add Entry" shown but 403 for this account. Fields from the record view.</dd>
+          <dt>View / print</dt><dd>SC name/emp no; date, station, point no, CHK; start date-time, end date-time, time taken (crosses midnight); release PNs (station, OCC); normalise PNs (station, OCC); <b>observation timeline</b>; attached images; remarks; sign &amp; metadata with <b>revision number</b>.</dd>
+          <dt>Relationships</dt><dd>Private Number Book, Masters › Point Number; Mock drill scenario "Manual point operation".</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r14">
+        <header><span class="no">14</span><h3>Local Traffic Regulation</h3><span class="chip">Train operations</span></header>
+        <p class="purpose">Records when control of the station's signalling passes between OCC and the station (offer control, take control, enforced take control).</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Analytics: Total operations, Offer Control (OC), Take Control (TC), Enforce take control. Columns: Date, Station, SC name, Emp ID, Operating system, Control status, Station PN, Exchange PN, Remarks, Submitted date, Action (detail).</dd>
+          <dt>Create</dt><dd class="gap">Not seen.</dd>
+          <dt>Relationships</dt><dd>Private Number Book.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r6">
+        <header><span class="no">6</span><h3>Incident</h3><span class="chip">Safety</span><span class="chip mono">CMRL/OPER/SO/R4 · Rev 00</span></header>
+        <p class="purpose">Incident reports classified by the national incident classes. The richest create form seen.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>KPI cards: Total, Police involved, Level 1, Level 2, Injuries. Columns: Station code, Incident no, Submitted date, Incident date, Class, Level, Subject, Created by, Emp ID, Actions.</dd>
+          <dt>Filters</dt><dd>Search, date from–to, Level, Class (A–L), Sub-class (~76, dependent on class).</dd>
+          <dt>Create</dt><dd>Station (auto) · Incident no auto <code>CMRL/OPER/SO/IN/{STN}/0001</code> · Date* · Time* · Class* · Sub-class* · Level* · Subject* · <b>Timeline</b>* (date, time, details, action; at least one row) · Communicated to reporting officer* (at, to) · Escalated?* Yes→ at, to · Prima facie cause* · Action initiated* · Loss of property?* Yes→ details · Delay in services?* Yes→ minor delay (min, from, to, section), major delay (same), trips cancelled* · Passenger details* · Injuries?* Yes→ details · Police/ambulance?* Yes→ details · signature of SC/SI.</dd>
+          <dt>Validation</dt><dd>"All fields required except header/footer and timeline" (yet the form also demands one timeline row). Conditional fields required only when Yes.</dd>
+          <dt>Relationships</dt><dd>Masters › Train Incident Class / Sub-Class; in our app, the Station Diary "create register entry" link.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r17">
+        <header><span class="no">17</span><h3>Mock Drill / Event / Pep Talk</h3><span class="chip">Safety</span><span class="chip mono">CMRL/OPER/SO/F-28 · Rev 00</span></header>
+        <p class="purpose">Stations run drills (evacuation, bomb threat, lift rescue, manual point operation…), events and pep talks. The safety officer schedules drills, reviews reports and approves the final report.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Tiles: Events, Mock drill, Pep talk, Total, <b>Pending scheduled drills</b>. Columns: Type, Date, Title, Station, Emp name, Emp ID, Preview.</dd>
+          <dt>Filters</dt><dd>Search, Type, date from–to, Department.</dd>
+          <dt>View / print</dt><dd>Type, station, date, department; title, location, participants, start, end, time taken; brief description; <b>action timeline</b>; images; sign &amp; metadata.</dd>
+          <dt>Workflow</dt><dd><span class="flow"><span>Scheduled</span><i>→</i><span>Executed</span><i>→</i><span>Under review</span><i>→</i><span>Completed / approved</span></span>. Review and Final Report pages (by year, category breakdown, top scenarios, approved by).</dd>
+          <dt>Create</dt><dd class="gap">Station entry form not seen.</dd>
+          <dt>Relationships</dt><dd>Masters › Mock Drill Plan (calendar, schedule, re-schedule history, category).</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r4">
+        <header><span class="no">4</span><h3>Passenger Assistance</h3><span class="chip">Station services</span><span class="chip mono">CMRL/OPER/SO/F-33 · Rev 02</span></header>
+        <p class="purpose">Daily record of passengers helped: wheelchair users, visually impaired, first aid, separated persons.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Tiles: Total assisted, Wheelchair, First aid, Visually impaired, Separated. Columns: Date, Station, Type, <b>count matrix</b> (Male/Female/Transgender × In/Out/Interchange; medical M/F/T; separated M/F/T), Shift, Remark, Action.</dd>
+          <dt>Filters</dt><dd>Search, date from–to, Shift (A, B, C, Evening, General), Type.</dd>
+          <dt>View / print</dt><dd>Station, shift, date, type; breakdown by gender with total; remarks; submitted by/at, revision at, revision; signature SC/SI.</dd>
+          <dt>Create</dt><dd class="gap">No Add button on the register. Where staff enter it is unconfirmed.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r5">
+        <header><span class="no">5</span><h3>Essential Equipment</h3><span class="chip">Station services</span></header>
+        <p class="purpose">Weekly check that emergency equipment is present and working (hand flag, wheelchair, stretcher, 33 kV gloves, torch, megaphone, first aid kit… about 32 items).</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Columns: Report date, Station, Item, Status, Photo, Remarks, Month, Checked by. Filters: Item, Year from–to, Month from–to, Status.</dd>
+          <dt>View / print</dt><dd>Monthly sheet per station: item, frequency (weekly), then per week status ✅/✗, remarks, date, name/ID. Print.</dd>
+          <dt>Create</dt><dd>Weekly checklist is a <b>dashboard pop-up</b>: per item Working / Not working, remarks, and a <b>required photo</b> (image).</dd>
+          <dt>Relationships</dt><dd>Masters › Essential Items.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r8">
+        <header><span class="no">8</span><h3>Key Register</h3><span class="chip">Station services</span></header>
+        <p class="purpose">Who has which station room key, and when it came back.</p>
+        <dl class="facts">
+          <dt>Workflow</dt><dd><span class="flow"><span>Takeover request</span><i>→</i><span>SC approves · Issued</span><i>→</i><span>Handover request</span><i>→</i><span>SC approves · Returned</span></span></dd>
+          <dt>Requests</dt><dd>Tiles: requested, approved, pending qty. Columns: Date, Time, Issued to, Emp no, Phone, Company (CMRL/contractor/other), Department, Room code, Key hive, Key no, Location, Reason, Status, Action.</dd>
+          <dt>Register</dt><dd>Tiles: Total, Issued (not returned), Returned. Columns: Date-time, Room – key no, Key hive, Issued to, Org, Mobile, Reason, SC, Return date-time, Returned by, SC, Status.</dd>
+          <dt>Create</dt><dd class="gap">Request form (probably filled by the worker) not seen.</dd>
+          <dt>Relationships</dt><dd>Masters › Room.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r13">
+        <header><span class="no">13</span><h3>Parking — Long Halt Vehicle</h3><span class="chip">Station services</span></header>
+        <p class="purpose">Vehicles left in station parking for days; charge worked out on exit.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Tiles: Total, Still parked (awaiting exit), Exited. Columns: Station, Vehicle no, Type, Entry date-time, Parking location, SC, Days parked, Exit, <b>System value</b> (computed charge), Amount collected, Exit done by, Action.</dd>
+          <dt>Workflow</dt><dd><span class="flow"><span>Entry</span><i>→</i><span>Exit &amp; settlement</span></span></dd>
+          <dt>Create</dt><dd class="gap">Entry and exit forms not seen.</dd>
+          <dt>Relationships</dt><dd>Parking tariff and policy documents (Assurance).</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r18">
+        <header><span class="no">18</span><h3>Station PD Management</h3><span class="chip">Station services</span></header>
+        <p class="purpose">Inspections of Property Development shops (licensees) at the station, with penalties.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Tiles: Inspections, Active licences, Expired licences, With penalties. Columns: Date, Station, Location, Area, LOA ref, Shop, PD code, Licensee, Tenure from–to, Inspection points, Penalty yes/no, Penalty remarks, Amount, Remarks, SC, Emp ID, Image, Action.</dd>
+          <dt>Create</dt><dd class="gap">Inspection form not seen.</dd>
+          <dt>Relationships</dt><dd>Masters › Shop.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r3">
+        <header><span class="no">3</span><h3>Cab Pass</h3><span class="chip">Station services</span></header>
+        <p class="purpose">Passes that allow staff from other departments to travel in the train cab, issued per half-year assessment period.</p>
+        <dl class="facts">
+          <dt>Workflow</dt><dd><span class="flow"><span>Department request</span><i>→</i><span>HOD</span><i>→</i><span>OP-HOD</span><i>→</i><span>Pass issued</span></span>; rejections at each level.</dd>
+          <dt>Requests</dt><dd>Tiles: approved (current / previous period), pending and rejected at HOD and OP-HOD. Columns: Date, Request ID, Pass count, Remark, Department, Status, Status remark.</dd>
+          <dt>Passes</dt><dd>Summary per department (CIV, OHE, OPN, RS, TEL, TRK, SIG, E&amp;M, OTH, SAF). Filters: Department, New/Renewal, dates. Columns: Created, Pass no (<code>CMRL/OPN-SAF/2026-2/9002</code>), Department, Valid from–to, Count, Receiver (name, emp no, designation, dept), Base unique ID (renewals). <b>Print selected</b>.</dd>
+          <dt>Relationships</dt><dd>Masters › Cab Pass (print instructions, allowed EPIC users, purposes).</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r7">
+        <header><span class="no">7</span><h3>Imprest</h3><span class="chip">Station services</span></header>
+        <p class="purpose">Station petty cash: bills are spent from a fixed budget, forwarded to the line manager and the cash is refilled.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Tiles: Station budget, Total expense, Cash in hand (can go negative), Current expense. Columns: Invoice # (<code>STST-FW-2026-0001</code>), Status (Draft / Completed), Forward date, Budget, invoice summary (bills, total, received by/from, cash in hand), cash handover (amount, date, received by/from, cash after refill), Action.</dd>
+          <dt>Actions</dt><dd>Forward selected invoices to line manager (receiver*) · Confirm refill receipt (amount, provider*, remark) · Invoice details (bills: ref, bill no, expense, category, amount, date, status) · Print invoice · Attachments (bill images).</dd>
+          <dt>Workflow</dt><dd><span class="flow"><span>Draft</span><i>→</i><span>Forwarded</span><i>→</i><span>Refill received</span><i>→</i><span>Completed</span></span></dd>
+          <dt>Create</dt><dd class="gap">Bill entry screen not seen.</dd>
+          <dt>Relationships</dt><dd>Masters › Imprest (station groups, expense master), Distribute amount station.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r2">
+        <header><span class="no">2</span><h3>Assurance</h3><span class="chip">Compliance</span></header>
+        <p class="purpose">Staff must read and acknowledge manuals, acts and instructions. Pages are blocked until assigned documents are read.</p>
+        <dl class="facts">
+          <dt>Register</dt><dd>Total manuals, acknowledgements. Columns: Manual, Category (Operational / Station / Common), Version, File, Description, Acknowledged at.</dd>
+          <dt>Tracking</dt><dd>Views, users, documents, stations. Columns: User, Designation, Station, Document (MAN id), Type, Viewed at, Status. Document-wise and user-wise counts; station report with % acknowledged per employee.</dd>
+          <dt>Special rules</dt><dd>Blocking pop-up "Document Assurance Required"; each document must stay open at least <b>5 seconds</b> before "I have read this document".</dd>
+          <dt>ISO setting</dt><dd>Document name*, Display name*, ISO number*, Revision*, Date* — the print header for the register.</dd>
+          <dt>Relationships</dt><dd>Read Manuals &amp; Acts, Masters › Manual / Manage directory.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r9">
+        <header><span class="no">9</span><h3>LMC Asset Fault</h3><span class="chip">Last Mile Connectivity</span></header>
+        <p class="purpose">Faults on feeder-service assets at the station, followed until rectified.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Tiles: Total, Open, Rectified, Rectify pending, In service, Out of service. Column groups: fault (fault no, station, CMRL asset no, description, image, raised on, SC, operation status, current status) · rectification (attended on, attended by and company, rectified on, operation status, remark) · exit employee.</dd>
+          <dt>Workflow</dt><dd><span class="flow"><span>Raised</span><i>→</i><span>Attended</span><i>→</i><span>Rectified</span><i>→</i><span>Closed</span></span></dd>
+          <dt>Create</dt><dd class="gap">Not seen.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r10">
+        <header><span class="no">10</span><h3>LMC Audit</h3><span class="chip">Last Mile Connectivity</span></header>
+        <p class="purpose">Audits of feeder services and operators.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Analytics: audits, your station, services, operators; charts monthly trend, operator-wise, service and route distribution. Columns: Date, Audit no, Station, Service, Operator, Route ID, Other reference, Media, Remarks, Employee, Designation, Action.</dd>
+          <dt>Create</dt><dd class="gap">Not seen.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r11">
+        <header><span class="no">11</span><h3>LMC Trip Sheet</h3><span class="chip">Last Mile Connectivity</span></header>
+        <p class="purpose">Per shift, the feeder trips run from the station with passengers and revenue.</p>
+        <dl class="facts">
+          <dt>List</dt><dd>Tiles: trip sheets, passengers (avg per trip), revenue (paid / free), round trips. Columns: Date, Shift, SC/SI, Station, Operator, Route ID, Vehicle type, Vehicle no, Pickup, Drop, Trips, Passengers, Amount, Return passengers, Return trips, Return amount, Total passengers, Total revenue, Remark.</dd>
+          <dt>Create</dt><dd class="gap">Not seen.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r12">
+        <header><span class="no">12</span><h3>LMC Marketing Plan</h3><span class="chip">Last Mile Connectivity</span></header>
+        <p class="purpose">Small project tracker for LMC marketing work.</p>
+        <dl class="facts">
+          <dt>Create</dt><dd>Project name, Type (master), Description, Start date, End date.</dd>
+          <dt>Manage</dt><dd>Details (edit) · Members (add, remove) · Logs (entry, attachments, by member) · Tasks (task, assigned to, due date, status, remark, verified by).</dd>
+          <dt>Workflow</dt><dd>Project: Not started → Active → …; task: Assigned → Done → Verified. "My projects" for assignees.</dd>
+        </dl>
+      </article>
+
+      <article class="reg" id="r15">
+        <header><span class="no">15</span><h3>Metro Connect</h3><span class="chip">Last Mile Connectivity</span></header>
+        <p class="purpose">Feeder bus service per station: trips, passengers and revenue.</p>
+        <dl class="facts">
+          <dt>Fields</dt><dd>Station, Service bus (LMC service master), Total trips, Total passengers, Revenue collected; Edit / Delete by permission.</dd>
+          <dt>Special rules</dt><dd class="gap">The live page crashes, so its list and forms could not be read.</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section class="part" id="discovery">
+      <h2>Whole-application discovery (28/09/2026)</h2>
+      <p>Because the old site will be withdrawn, every menu and screen visible to this login was captured read-only: about 90 screens across 16 modules. Full detail, including every column, filter value and dialog, is in <code>docs/register-analysis/discovery.md</code>. Below is the summary.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Module</th><th>Screens</th><th>What it does</th><th>Official forms</th></tr></thead>
+        <tbody>
+          <tr><td>Dashboard</td><td>/dashboard</td><td>KPIs (passenger requests, items found, cash remitted), activity feed, PTW tracker, quick-links directory. <b>Essential Equipment weekly checklist and the Assurance declaration are pop-ups here</b>.</td><td>—</td></tr>
+          <tr><td>User menu</td><td>profile, update photo &amp; signature, change password, notifications</td><td>Signature image is printed on official forms. Notification Center with "Open Desk" links (e.g. key requests).</td><td>—</td></tr>
+          <tr><td>Read Manuals &amp; Acts</td><td>/folders, /view_files/{dir}, /getacts</td><td>16 folders of manuals (MRGR, SOPs, station working orders, special instructions…), version, download.</td><td>—</td></tr>
+          <tr><td>Private Number Book</td><td>/pn-books</td><td>PN no, exchanged with, exchanged PN, purpose, date; Generate PN.</td><td>—</td></tr>
+          <tr><td>Employee Operations</td><td>/logindropdownmaster, /station-audit-configurations</td><td><b>Which stations and shifts each role may pick at login</b> (10 roles); monthly asset-audit enforcement per station.</td><td>—</td></tr>
+          <tr><td>Epic List</td><td>/epics_for_nodal, /epics_for_hod, /epics/{id}</td><td>Authorised / nominated staff and contractors (278): competency no, expiry, HOD permit, login account created; nodal creates, HOD approves.</td><td>EPIC preview</td></tr>
+          <tr><td>Lost &amp; Found</td><td>found lists (station/all), images, register, summary reports, passenger requests (LIR), remitted to bank</td><td>Categories A–H; found → claimed / remitted to bank (challan) / moved to L&amp;F office (approved); passenger request status Pending → Handed over / Not available / Rejected.</td><td class="mono">F-38, F-39</td></tr>
+          <tr><td>Masters</td><td>~50 lists</td><td>Stations (55), shifts, departments (20), designations, corridors, incident classes A–L + 76 sub-classes + plans, track circuit ↔ mast (548), trains (52), rooms &amp; keys, racks, essential items, hot keys, expense heads, cab-pass rules, LMC services/routes, WGO lists, IMP scenarios…</td><td>—</td></tr>
+          <tr><td>PTW</td><td>/localpermit, /ptw/ptwtrack, issue &amp; cancellation forms</td><td>SC/SI approval dashboards (issue, extension, cancel); local and track permits with undertakings, earth rods, PNs, closing station.</td><td class="mono">R-12, F-12, R-XX</td></tr>
+          <tr><td>WGO</td><td>/wgo, /wgo_preview/{id}, power block, parking induction</td><td>Normal / Special / Emergency / Approved with week calendar; Special: HOD → Op HOD → OCC; forward to TTM; power block, OHE vicinity, vehicles, platforms, lights, fans, OC500/OC111, TETRA.</td><td>WGO request</td></tr>
+          <tr><td>Customer Care</td><td>/complaintsdata, /customer_care</td><td>Complaints assigned with class A/B/C, department, target days; closed date and days taken (SLA); email to department.</td><td>—</td></tr>
+          <tr><td>Station Shift Diary</td><td>/stationdiary, /station-diary-filterpage</td><td>Already rebuilt in the new ODMS. Old one also has floating cash and shift B1.</td><td class="mono">F-01</td></tr>
+          <tr><td>Asset</td><td>assets, detail, requests, SC requests, movements, maintenance, disposal, audit</td><td>Asset code <code>OPN/{STN}/{cat}/{NAME}/{seq}</code>, status working/defective/scrap, QR labels, request → approve, movement, disposal approval, monthly audit.</td><td class="mono">F-17</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="grid2">
+        <div class="box"><h3>Shift master (old system)</h3>
+          <div class="tw" style="margin-top:8px"><table><thead><tr><th>Shift</th><th>Code</th><th>Time</th></tr></thead><tbody>
+            <tr><td>A</td><td>A</td><td>07:00–13:00</td></tr>
+            <tr><td>B</td><td>B</td><td>13:00–21:00</td></tr>
+            <tr><td>C</td><td>C</td><td>21:00–07:00</td></tr>
+            <tr><td>General</td><td>G</td><td>09:30–17:30</td></tr>
+            <tr><td>Evening</td><td>B1</td><td>14:00–22:00</td></tr>
+          </tbody></table></div>
+          <p class="lead" style="margin-top:8px">New ODMS currently uses A 06–14, G 09–17:30, B 14–22, C 22–06. Needs a decision.</p>
+        </div>
+        <div class="box"><h3>Login roles (station &amp; shift choices)</h3>
+          <div class="tw" style="margin-top:8px"><table><thead><tr><th>Role</th><th>Stations</th><th>Shifts</th></tr></thead><tbody>
+            <tr><td>Station Incharge</td><td>26 stations</td><td>A G B C</td></tr>
+            <tr><td>Traffic Controller</td><td>TCP1</td><td>A G B C</td></tr>
+            <tr><td>Traffic Regulator</td><td>TRP1C1, TRP1C2</td><td>A G B C</td></tr>
+            <tr><td>Revenue Controller</td><td>RCP1</td><td>A G B</td></tr>
+            <tr><td>LostAndFoundOffice</td><td>LFO</td><td>A G B C</td></tr>
+            <tr><td>Helpline</td><td>HL1</td><td>A G B C</td></tr>
+            <tr><td>assetaudit</td><td>OPN-STORE, AAP1SMM</td><td>A G B C</td></tr>
+            <tr><td>Training cell</td><td>OTC</td><td>G</td></tr>
+            <tr><td>admin</td><td>ADMIN</td><td>G</td></tr>
+            <tr><td>test</td><td>STST</td><td>A G B C</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="part" id="access">
+      <h2>Access with the current login</h2>
+      <div class="tw"><table><thead><tr><th>Area</th><th>Restricted</th><th>Errors on the old site</th></tr></thead><tbody>
+        <tr><td>Roles, Employee Management</td><td>No sub-items shown</td><td>—</td></tr>
+        <tr><td>Lost &amp; Found › Add Found Items</td><td>403 Forbidden</td><td>—</td></tr>
+        <tr><td>Masters › Epic Station Control</td><td>403 Forbidden</td><td>—</td></tr>
+        <tr><td>Register › Manual Point › Add Entry</td><td>403 Forbidden (button still shown)</td><td>—</td></tr>
+        <tr><td>Asset › Request For Asset</td><td>403 Forbidden</td><td>—</td></tr>
+        <tr><td>Most registers</td><td>No create screen for this login</td><td>—</td></tr>
+        <tr><td>Register › Metro Connect</td><td>—</td><td>500 error, debug page</td></tr>
+        <tr><td>Dashboard › View all permits (/activeptw)</td><td>—</td><td>500 PHP ParseError, debug page</td></tr>
+        <tr><td>Dashboard</td><td>—</td><td>Past events shown as "from now"; permit expiry as raw decimals</td></tr>
+        <tr><td>Change password</td><td>—</td><td>Does not ask for the current password</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="part" id="completion">
+      <h2>Completion pass (29/09/2026)</h2>
+      <p>To make sure nothing was missed, all 134 known pages were read and every link inside them listed (163 targets). The 40 new page routes were opened; 82 stored files (uploaded images/PDFs) and all delete/approve/status links were left alone.</p>
+      <div class="find"><span class="tag bad">Safety</span><p>Some destructive actions in the old system are plain links (for example <code>/failure_section/{name}/delete</code>) — opening the link deletes data. None were opened. The new ODMS must never change data from a link.</p></div>
+      <div class="tw"><table><thead><tr><th>New sub-page</th><th>What it is</th></tr></thead><tbody>
+        <tr><td>Claimant Details (from "Claim Now")</td><td>Hand-over of a found item: LIR enquiry ID (if any), claimant ID proof type (PAN, Aadhaar, Voter ID, Passport, Driving licence, Student ID, Other), ID number, <b>front and back images of the ID, claimant signature</b>, person and witness names, photo, remarks.</td></tr>
+        <tr><td>Task acknowledgements</td><td>Per task/event: station, shift, status, acknowledged by, completed by.</td></tr>
+        <tr><td>Custom power block timing</td><td>Date-specific corridor 1 and 2 power-block ranges with remarks; Excel/PDF.</td></tr>
+        <tr><td>Train parking weekly master</td><td>Per weekday: parking train, inducting train, actual value.</td></tr>
+        <tr><td>Pending assigned mock drills</td><td>Schedule ID, scenario (21 scenarios), assigned to, window, status.</td></tr>
+        <tr><td>Cab pass export, instructions preview, previous shift summary, TSR all departments</td><td>Views and print previews.</td></tr>
+        <tr><td>Add/edit forms for Essential items, Incident sub-class, WGO lists</td><td>Opened (not submitted).</td></tr>
+        <tr><td>Add forms for Station, Hot keys, Holiday, EPIC organisation, Failure section, Incident class, LMC service type, Scenario edit</td><td>403 — the Add buttons are shown but the forms are forbidden.</td></tr>
+        <tr><td>WGO edit</td><td>500 server error.</td></tr>
+      </tbody></table></div>
+      <p>Masters that load their rows by script were re-read in the browser: 9 asset categories and 56 asset names, 4 modes of operation (ATO, ATP, CUT OUT, RM), 99 point numbers, rooms and keys, PD shops, 6 corridor routes (Blue Line and Green Line, up and down), LMC services, asset maintenance, disposal (a rejected request still shows the asset as disposed) and audit. All 16 manual folders are listed with their documents.</p>
+    </section>
+
+    <section class="part" id="gaps">
+      <h2>Gaps for the full-access pass</h2>
+      <p>Nothing below was assumed. These need the full-access login (or screenshots / paper forms):</p>
+      <div class="grid2">
+        <div class="box"><h3>Create forms</h3><p class="lead">Caution Order, TSR request, WGO create/edit, Local and Track PTW requests, Key takeover/handover request, Passenger Assistance entry, Imprest bill entry, Parking entry/exit, PD inspection, Local Traffic Regulation, Metro Connect, Manual Point Operation, Mock Drill entry, LMC fault/audit/trip sheet, Train Traffic, Cab Pass request, EPIC create, Lost &amp; Found add, Asset request, Generate PN.</p></div>
+        <div class="box"><h3>Approvals and admin</h3><p class="lead">PTW issue/extend/cancel approvals, WGO HOD → Op HOD → OCC, Cab Pass HOD/OP-HOD, EPIC HOD approval, Mock drill review, asset request/disposal approval, Imprest line-manager side, key request approval; Roles and permissions, Employee Management, Epic Station Control, master add/edit forms.</p></div>
+        <div class="box"><h3>Other users' views</h3><p class="lead">OCC (traffic controller/regulator), department users, HOD / Op HOD, safety officer, LMC operator, Lost &amp; Found Office, Helpline, Revenue Controller, admin.</p></div>
+        <div class="box"><h3>Broken or unclear</h3><p class="lead">Metro Connect, Active PTW and WGO edit (server errors), found-item detail pop-up, Quick Access button, where Imprest bills and Passenger Assistance are entered, and the content of Excel/PDF exports (not downloaded without your permission).</p></div>
+      </div>
+    </section>
+
+    <section class="part" id="patterns">
+      <h2>Common patterns</h2>
+      <div class="grid2">
+        <div class="box"><h3>Register page</h3><ul class="tight">
+          <li>Title + station code; KPI tiles that filter the table ("KPI view").</li>
+          <li>Filter panel: date range, status, type, department, shift, free text.</li>
+          <li>Copy · Excel · CSV · PDF · Print; page size up to All.</li>
+          <li>Row actions: View, ⋮ Edit / Delete; bulk select on a few.</li>
+          <li>Quick Links to related masters and registers.</li>
+        </ul></div>
+        <div class="box"><h3>Record view = official form</h3><ul class="tight">
+          <li>Header: CMRL, form title, Doc no, Rev, Date.</li>
+          <li>Sections of label/value pairs.</li>
+          <li>Repeating <b>timeline</b> (date, time, action/observation).</li>
+          <li>Attached images.</li>
+          <li><b>Sign &amp; metadata</b>: submitted by/at, revision at, revision no, date of record, place, signature of SC/SI.</li>
+        </ul></div>
+        <div class="box"><h3>Forms</h3><ul class="tight">
+          <li>Auto reference numbers per register (station, year, dept, sequence).</li>
+          <li>Dependent selects (class → sub-class).</li>
+          <li>Yes/No questions that open a required details field.</li>
+          <li>Count matrices (gender × in/out/interchange).</li>
+          <li>Computed values: time taken (across midnight), days parked, charges.</li>
+          <li>Private number (PN) fields for OCC coordination.</li>
+        </ul></div>
+        <div class="box"><h3>Workflows</h3><ul class="tight">
+          <li>Request → approve / reject (Key, Cab Pass, PTW, WGO).</li>
+          <li>Two-level approval (HOD → OP-HOD).</li>
+          <li>Issue → extend → cancel (TSR, PTW, Caution Order).</li>
+          <li>Schedule → execute → review → approve (Mock drill).</li>
+          <li>Open → attend → rectify → close (LMC faults).</li>
+          <li>Pending → finalised &amp; locked (TTM).</li>
+        </ul></div>
+      </div>
+      <div class="box"><h3>Reference number formats</h3>
+        <div class="tw" style="margin-top:8px"><table><thead><tr><th>Register</th><th>Example</th><th>Pattern</th></tr></thead><tbody>
+          <tr><td>Caution Order</td><td class="mono">2026/0003/STST-SWD/OPN</td><td>year / seq / from-to / dept</td></tr>
+          <tr><td>Incident</td><td class="mono">CMRL/OPER/SO/IN/STST/0001</td><td>org / dept / section / IN / station / seq</td></tr>
+          <tr><td>TSR</td><td class="mono">2026/09/00003/CIV</td><td>year / month / seq / dept</td></tr>
+          <tr><td>Train Traffic</td><td class="mono">2026/TTM/CIV/0017</td><td>year / TTM / dept / seq</td></tr>
+          <tr><td>PTW</td><td class="mono">STST-L-00012 · STST-T-00010</td><td>station - Local/Track - seq</td></tr>
+          <tr><td>WGO</td><td class="mono">NOR_SIG/2026-09-06/0003-APP</td><td>mode_dept / date / seq [-APP|-REJ]</td></tr>
+          <tr><td>Cab Pass</td><td class="mono">CMRL/OPN-SAF/2026-2/9002</td><td>org / OPN-dept / year-half / seq</td></tr>
+          <tr><td>Imprest</td><td class="mono">STST-FW-2026-0001</td><td>station - FW - year - seq</td></tr>
+        </tbody></table></div>
+      </div>
+    </section>
+
+    <section class="part" id="components">
+      <h2>Reusable components for the new ODMS</h2>
+      <p>What we would build once and use across all registers. Several already exist from the Registers and Export work.</p>
+      <div class="tw"><table><thead><tr><th>Component</th><th>Used by</th><th>Status in new ODMS</th></tr></thead><tbody>
+        <tr><td><b>Register definition</b> (fields, sections, columns, filters, KPIs, reference format, workflow, permissions)</td><td>All</td><td>Exists in basic form (<code>definitions.ts</code>); needs field types and workflow below</td></tr>
+        <tr><td>Register list page (KPI tiles → filter, filter panel, table, row actions, pagination)</td><td>All</td><td>Partly exists</td></tr>
+        <tr><td>Export (Copy, CSV, Excel, PDF, Print) with configurable header</td><td>All</td><td>Built (<code>src/export</code>)</td></tr>
+        <tr><td>Record form engine: text, number, date, time, select (static / master), dependent select, Yes/No → details, count matrix, repeater/timeline, images, PN field, employee lookup, computed field</td><td>All</td><td>New</td></tr>
+        <tr><td>Official record view (form header, sections, timeline, images, sign &amp; metadata, revision)</td><td>F-28, F-32, F-33, F-43, R4, TSR, OCC R-04</td><td>New (the Station Diary form sheet is a model)</td></tr>
+        <tr><td>Workflow engine: states, transitions, who may act, required remark, history</td><td>Key, Cab Pass, PTW, TSR, WGO, Mock drill, Imprest, LMC fault, Parking, TTM</td><td>Partly (status + history exist)</td></tr>
+        <tr><td>Masters (lookup lists) with admin screens</td><td>Most</td><td>New</td></tr>
+        <tr><td>Private Number field + link to PN book</td><td>Manual point, LTR, Possession, Caution Order</td><td>PN generation exists in Station Diary</td></tr>
+        <tr><td>Audit history and revisions (edits keep earlier values)</td><td>All</td><td>Exists for registers and diary</td></tr>
+        <tr><td>Attachments / photos</td><td>Many</td><td>Diary has images; extend</td></tr>
+        <tr><td>Analytics tiles and simple charts</td><td>LMC, Mock drill, Assurance</td><td>New</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="part" id="roles">
+      <h2>Roles &amp; permissions</h2>
+      <p>The old system uses per-register permissions (<code>view</code>, <code>create</code>, <code>edit</code>, <code>delete</code> + approve actions) assigned to roles. The Roles menu was empty for this account, so the full role list is still needed. Roles seen in the data:</p>
+      <div class="tw"><table><thead><tr><th>Role</th><th>What they do</th></tr></thead><tbody>
+        <tr><td>Station Controller / Station Incharge / SI</td><td>Most station entries, issue caution orders, approve key requests, sign forms</td></tr>
+        <tr><td>OCC (TC / DC / SC)</td><td>Raise caution orders, implement TSR, train traffic register, control handover</td></tr>
+        <tr><td>Department users (CIV, SIG, OHE, TRK, RS, TEL, E&amp;M…)</td><td>Request TSR, WGO, PTW; cab pass requests</td></tr>
+        <tr><td>Signaling department</td><td>Implement and cancel TSR in signalling</td></tr>
+        <tr><td>HOD, Operations HOD</td><td>Approve cab passes; escalation recipients</td></tr>
+        <tr><td>Safety officer</td><td>Schedule, review and approve mock drills</td></tr>
+        <tr><td>Line manager</td><td>Receive forwarded imprest invoices, refill cash</td></tr>
+        <tr><td>LMC users / operators</td><td>LMC marketing projects, faults, trips</td></tr>
+        <tr><td>EPIC users (contract workers)</td><td>Named on PTW and cab pass requests</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="part" id="defects">
+      <h2>Old-system defects not to carry over</h2>
+      <div class="find"><span class="tag bad">Security</span><p>Debug error pages expose source, SQL and session cookies. The new app must never show internal errors to users.</p></div>
+      <div class="find"><span class="tag bad">Bug</span><p>Metro Connect page crashes on a missing master record; WGO shows raw IDs instead of names.</p></div>
+      <div class="find"><span class="tag warn">Rules</span><p>WGO allows bulk delete; our rule is that register records are never deleted (cancel or void with a reason instead).</p></div>
+      <div class="find"><span class="tag warn">Usability</span><p>Buttons shown to users who lack the permission (Add Entry → 403). New app: hide or disable with a reason.</p></div>
+      <div class="find"><span class="tag warn">Consistency</span><p>Shift names differ between screens (A/B/C/Evening/General vs A/G/B/C); date formats vary (<code>2026-09-17</code>, <code>17-09-2026</code>, <code>17 Sep 2026</code>) and some rows show only a time. New app: <code>24/09/2026 14:58</code> everywhere.</p></div>
+      <div class="find"><span class="tag warn">Performance</span><p>Some pages load every station's records at once. New app: filter by station and paginate on the server.</p></div>
+      <div class="find"><span class="tag info">Validation</span><p>Incident says the timeline is optional but also requires one row. Rules must be stated once, in the definition.</p></div>
+    </section>
+
+    <section class="part" id="approach">
+      <h2>Proposed approach (for your decision)</h2>
+      <p>One <b>register engine</b> driven by configuration covers most registers. A few need their own screens built from the same parts.</p>
+      <div class="grid2">
+        <div class="box"><h3>Config-driven (engine)</h3><p class="lead">Passenger Assistance, Essential Equipment, Incident, Manual Point Operation, Local Traffic Regulation, Mock Drill (station side), Parking, PD Management, Key Register, LMC Asset Fault, LMC Audit, LMC Trip Sheet, Metro Connect.</p></div>
+        <div class="box"><h3>Custom screens on shared parts</h3><p class="lead">Caution Order (per-train issue), TSR + Signaling, Possession/PTW, WGO, Train Traffic (OCC), Cab Pass (two-level approval, printing), Imprest (cash flow), Assurance (reading gate), LMC Marketing (project tracker), Mock Drill scheduling/review.</p></div>
+      </div>
+      <div class="box"><h3>Suggested phases</h3><ul class="tight">
+        <li><b>Phase 1:</b> engine upgrade (field types, official record view, workflow, masters) + station registers: Incident, Passenger Assistance, Essential Equipment, Manual Point, LTR, Key, Parking, PD, Mock Drill (station).</li>
+        <li><b>Phase 2:</b> permit and approval registers: Caution Order, TSR/Signaling, Possession/PTW, WGO, Cab Pass, Imprest.</li>
+        <li><b>Phase 3:</b> LMC group, Assurance, Train Traffic, analytics.</li>
+        <li>Replace the current placeholder registers in the new app (Occurrence Log, Safety Inspection, Fire Drill, Equipment Fault, Keys, Complaints, Lost &amp; Found) with the real ones above.</li>
+      </ul></div>
+    </section>
+
+    <section class="part" id="questions">
+      <h2>Questions to confirm before Step 5</h2>
+      <div class="qs">
+        <div class="q"><p><b>Create forms.</b> Can you give access to an account with create/approve rights (or paper forms / screenshots) so I can capture the forms I could not see: Caution Order, TSR request, WGO, PTW, Key request, Passenger Assistance, Essential Equipment, Imprest bills, Parking, PD, LTR, Metro Connect, Mock Drill, LMC fault/audit/trip, Train Traffic?</p></div>
+        <div class="q"><p><b>Where station staff enter records.</b> The registers have no Add button for this account and the old diary has no register forms. Is entry done from another screen or a mobile app?</p></div>
+        <div class="q"><p><b>Scope and users.</b> Should the new ODMS cover the OCC- and department-driven registers (TTM, TSR, Signaling, WGO, Cab Pass approvals) now, with those users logging in, or only the station side first?</p></div>
+        <div class="q"><p><b>Roles.</b> Please share the full role list and what each role may do (the Roles menu is empty for this account).</p></div>
+        <div class="q"><p><b>Shifts.</b> The old Shift Master says A 07–13, B 13–21, C 21–07, G 09:30–17:30 and Evening (B1) 14–22; the new ODMS uses A 06–14, G 09–17:30, B 14–22, C 22–06. Which is right, and is B1 still used?</p></div>
+        <div class="q"><p><b>Login.</b> Add Station and Shift selection to the new login, limited per role as in the old Role-Based Login Control Panel?</p></div>
+        <div class="q"><p><b>Report headers.</b> The old system keeps two header settings per module — Register (list, e.g. PTW R-12) and Record (single form, e.g. F-12). Adopt the same in the new export header model?</p></div>
+        <div class="q"><p><b>Other modules.</b> Lost &amp; Found, PTW, WGO, Customer Care, Asset, EPIC, PN Book and Manuals also exist in the old system. Confirm they are all in scope for the new ODMS, and their order.</p></div>
+        <div class="q"><p><b>Deletion.</b> Confirm that no register allows deleting records (WGO currently does), only cancelling with a reason.</p></div>
+        <div class="q"><p><b>Placeholders.</b> Replace the new app's sample registers with the real list, and the approach and phases above?</p></div>
+        <div class="q"><p><b>History.</b> Will existing records be migrated from the old system?</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Source: read-only walks through cmrl-odms.com on 25/09/2026 (registers) and 28/09/2026 (whole application) with the "Test – Phase-II" account (station STST). Nothing was created, submitted, approved, edited or deleted, and personal data in live records was not copied. Full notes: <code>docs/register-analysis/notes.md</code> (registers) and <code>docs/register-analysis/discovery.md</code> (whole application) in the traqops-cmrl-odms repository.</footer>
+</div>

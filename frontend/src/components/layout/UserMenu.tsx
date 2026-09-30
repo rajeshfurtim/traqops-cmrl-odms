@@ -12,6 +12,8 @@ import {
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { Avatar } from '@/components/ui/Avatar'
 import { DEMO_ROLES } from '@/constants/mock'
+import { useNavigate } from 'react-router-dom'
+import { signOut } from '@/auth/authStore'
 import { useSession } from '@/context/SessionContext'
 import { useTheme } from '@/context/ThemeContext'
 import { useDismiss } from '@/hooks/useDismiss'
@@ -48,6 +50,7 @@ export function UserMenu() {
   const { user, station, setDemoRole } = useSession()
   const { preference, setPreference } = useTheme()
   const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const menuId = useId()
@@ -205,7 +208,15 @@ export function UserMenu() {
                     type="button"
                     role="menuitem"
                     tabIndex={-1}
-                    onClick={() => close(true)}
+                    onClick={() => {
+                      if (action.id === 'logout') {
+                        setOpen(false)
+                        signOut()
+                        navigate('/login', { replace: true })
+                        return
+                      }
+                      close(true)
+                    }}
                     className={`${MENU_ITEM} ${danger ? 'text-danger' : 'text-ink'}`}
                   >
                     <Icon

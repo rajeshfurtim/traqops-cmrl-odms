@@ -38,6 +38,18 @@ src/
 `app/router.tsx` (`lazy: page(() => import(...))`) with `handle: { crumb }` (a crumb can be a function of the route
 params), then set `to` and `status: 'available'` on its entry in `constants/navigation.ts`. Start each page with `<PageHeader>`.
 
+## Sign-in
+
+- `/login` (Employee ID, password with show/hide and Caps Lock hint, captcha, "Keep me signed in", Forgot password)
+  and `/forgot-password`, in `pages/` with the shared `components/layout/AuthLayout.tsx`. Same fields as the old
+  system's login.
+- Every app route sits behind `RequireAuth` (`src/auth/`); signed-out users return to the page they asked for after
+  signing in. **Log out** is in the user menu.
+- `auth/authStore.ts` and `auth/captcha.ts` are the mock API (demo accounts in `constants/mock.ts`, shown on the login
+  page in development only). Five wrong tries lock an ID for 5 minutes. The captcha answer never reaches the page.
+  Only the employee ID and sign-in time are kept in the browser (localStorage with "Keep me signed in", else
+  sessionStorage); with the backend this becomes an httpOnly cookie and only these two files change.
+
 ## Modules
 
 **Data:** each module's `data/*Store.ts` is an in-memory mock with the shape of the future API (hooks for reads,

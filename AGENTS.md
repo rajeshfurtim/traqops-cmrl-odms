@@ -57,7 +57,8 @@ frontend/src/
 │   ├── station-diary/  pages/ components/ data/ pdf/ types.ts constants.ts utils.ts richText.ts hooks.ts
 │   └── registers/      pages/ components/ data/ definitions.ts types.ts
 ├── constants/      navigation.ts (sidebar + search), mock.ts (session), search.ts
-├── context/        SessionContext (user/station/shift), ShellContext, ThemeContext
+├── auth/           mock sign-in API (authStore, captcha), RequireAuth / GuestOnly route guards
+├── context/        SessionContext (user/station/shift, from the signed-in user), ShellContext, ThemeContext
 ├── export/         shared Copy/CSV/Excel/PDF/Print + configurable report headers (see frontend/README.md)
 ├── hooks/ pages/ types/ utils/
 └── styles/index.css   design tokens (the only source of colours, type sizes, radii, shadows)
