@@ -452,6 +452,87 @@
       transform: translateY(-4px) scale(0.98);
     }
   }
+
+  /* Sign-in panel: the train pulls in, halts at the platform, departs, and the next one arrives */
+  .odms-train-run {
+    animation: odms-train-run 14s infinite;
+  }
+  @keyframes odms-train-run {
+    0% {
+      transform: translateX(-680px);
+      animation-timing-function: cubic-bezier(0.1, 0.55, 0.25, 1); /* brake into the platform */
+    }
+    32%,
+    58% {
+      transform: translateX(0);
+      animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.45); /* pull away */
+    }
+    86%,
+    100% {
+      transform: translateX(1280px);
+    }
+  }
+  /* Same 14s cycle: doors open once the train has stopped (32%) and close before it pulls away (58%) */
+  .odms-door-left,
+  .odms-door-right {
+    animation: 14s ease-in-out infinite;
+  }
+  .odms-door-left {
+    animation-name: odms-door-left;
+  }
+  .odms-door-right {
+    animation-name: odms-door-right;
+  }
+  @keyframes odms-door-left {
+    0%,
+    36%,
+    56%,
+    100% {
+      transform: translateX(0);
+    }
+    40%,
+    52% {
+      transform: translateX(-10px);
+    }
+  }
+  @keyframes odms-door-right {
+    0%,
+    36%,
+    56%,
+    100% {
+      transform: translateX(0);
+    }
+    40%,
+    52% {
+      transform: translateX(10px);
+    }
+  }
+  .odms-door-lamp {
+    opacity: 0;
+    animation: odms-door-lamp 14s step-end infinite;
+  }
+  /* Lamp: on while the doors are open, flashing as they close */
+  @keyframes odms-door-lamp {
+    0%,
+    52%,
+    54%,
+    56% {
+      opacity: 0;
+    }
+    35%,
+    53%,
+    55% {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .odms-train-run,
+    .odms-door-left,
+    .odms-door-right,
+    .odms-door-lamp {
+      animation: none;
+    }
+  }
 }
 
 /* Shared report export (src/export): the print sheet is hidden on screen, and alone on paper while printing */

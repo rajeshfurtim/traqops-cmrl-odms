@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import cmrlFullLogo from '@/assets/cmrl-full-logo.png'
 import { BrandLockup } from './Brand'
+import { MetroScene } from './MetroScene'
 
 const FEATURES = ['Station Diary and shift handover', 'Statutory registers', 'Reports with the official CMRL header']
 
@@ -38,7 +39,7 @@ export function AuthLayout({ title, children }: AuthLayoutProps) {
 
   return (
     <div className="grid min-h-dvh bg-canvas lg:grid-cols-[minmax(0,1fr)_minmax(30rem,36rem)]">
-      <aside className="on-dark relative hidden flex-col justify-between overflow-hidden border-l-[0.5rem] border-accent bg-nav px-12 py-10 text-ink lg:flex">
+      <aside className="on-dark relative hidden flex-col gap-8 overflow-hidden border-l-[0.5rem] border-accent bg-nav px-12 py-10 text-ink lg:flex">
         <img
           src={cmrlFullLogo}
           alt="Chennai Metro Rail Limited"
@@ -48,7 +49,7 @@ export function AuthLayout({ title, children }: AuthLayoutProps) {
           className="h-14 w-auto self-start brightness-0 invert select-none"
         />
 
-        <div className="flex max-w-[30rem] flex-col gap-6">
+        <div className="flex max-w-[30rem] flex-1 flex-col justify-center gap-6">
           <RouteStrip className="w-72" />
           <div>
             <p className="font-display text-[2.75rem] leading-none font-extrabold tracking-tight text-ink">ODMS</p>
@@ -66,9 +67,12 @@ export function AuthLayout({ title, children }: AuthLayoutProps) {
           </ul>
         </div>
 
-        <p className="max-w-[30rem] text-caption text-ink-muted">
-          For authorised CMRL staff only. Sign-ins and actions are recorded.
-        </p>
+        <div className="-mx-12 -mb-10 flex flex-col">
+          <MetroScene className="h-[17rem] w-full" />
+          <p className="bg-black/25 px-12 py-3 text-caption text-ink-muted">
+            For authorised CMRL staff only. Sign-ins and actions are recorded.
+          </p>
+        </div>
       </aside>
 
       <main className="flex flex-col items-center justify-center px-4 py-8 sm:px-8">
