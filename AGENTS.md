@@ -145,10 +145,25 @@ frontend/src/
   - The PDF is a real file from `@react-pdf/renderer`, not `window.print()`. `pdf/downloadDiaryPdf.tsx` is the one
     seam to swap for server-side generation later. ★ is drawn as a vector because Inter's Latin WOFF files lack it;
     ₹ comes from the Latin Extended file via font fallback.
-- **Registers:** each register is **configuration** in `modules/registers/definitions.ts` (fields, reference code,
-  retention). The table, form and record panel are generated from it. Records are never deleted. Status goes
-  Open → In progress → Pending verification → Closed, closing needs a remark, and every change goes into history.
-  "Create register entry" on a diary entry opens the register picker, pre-fills the form and links both ways.
+- **Registers:** rebuilt from the old ODMS (`docs/register-analysis/`). Phase 1 = the nine station registers
+  (Incident, Manual Point Operation, Local Traffic Regulation, Mock Drill / Events, Passenger Assistance, Essential
+  Equipment, Key Register, Parking, PD Management); the old sample registers are gone. Phase 2 (Caution Order, TSR,
+  PTW / Possession, WGO, Cab Pass, Imprest) and Phase 3 (LMC, Assurance, Train Traffic) come later.
+  - Each register is **configuration** in `modules/registers/definitions.ts` (sections, fields, columns, filters,
+    tiles, reference format, official form, workflow). Home, table, form, form view, print and export are generated
+    from it. Add field types to the engine (`fields.ts`, `FieldInput.tsx`, `RecordSheet.tsx`), not per register.
+  - Fields follow the official forms and the old system's columns; fields not yet confirmed by CMRL carry
+    `inferred: true`. Masters live in `data/masters.ts`.
+  - Registers without a workflow are logs ("Recorded"). A workflow is per register (Key: Issued → Returned; Parking:
+    Parked → Exited); each step is a small form stored on the record.
+  - Records are **never deleted**. Only the person who recorded an entry can correct it, with a reason; earlier values
+    are kept as revisions. Every change goes into history.
+  - Shifts in registers are A, G, B, C only (no B1 Evening). Essential Equipment needs a photo only for items not
+    working (the old system asked for one per item; to confirm with CMRL).
+  - Layout (chosen by the product owner): Registers home is a **card grid**; a register page is a **full-width table
+    with a side drawer** from the right for the chosen entry (details / official form, steps, correct, print). Design
+    options considered are on the "ODMS Registers design variants" canvas.
+  - "Create register entry" on a diary entry opens the register picker, pre-fills the form and links both ways.
 - **Export (new registers and modules):** use the shared `src/export/` component (`ExportActions` + a
   `ReportDefinition`): Copy, CSV, Excel, PDF, Print. **Shift Summary and Station Diary keep their own exports; don't
   migrate them.** In report headers users may change **only Layout (Standard / Compact), Register title, Subtitle and

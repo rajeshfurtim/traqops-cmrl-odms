@@ -158,3 +158,12 @@ Logged-in view: "Test - Phase-II", station STST (teststation). Role limits what 
 - Columns: ID, WGO no (NOR_SIG/2026-09-06/0003 = mode_dept/date/seq, suffix -APP approved / -REJ rejected), Mode (Normal/Emergency/Special), Subject (Maintenance/Inspection/Testing), Source, Destination, Department, Line (Line 1/2), Work day, Status, Created.
 - ⚠ Source/Destination/Department show raw IDs (94, 67, 31) — display bug.
 - Related: WGO module (Power block timing, Train parking induction, WGO masters: access request, equip/vehicle, lights, movement from, parking location, TVS fan status).
+
+## Master values read for Phase 1 (30/09/2026, read-only)
+- **Incident sub-classes** (from the class → sub-class dropdown on /incident/create; 76): A1–A5 collisions, B1–B8 fire/explosion/smoke/air renewal, C1–C5 derailments, D1–D4 running into obstruction, E (security threats), F1–F4 averted collisions / SPAD, G (other train accident), H1–H11 rolling stock, I-1–I-7 track & structures, J1–J7 electrical (OHE, power supply, lifts & escalators > 2 h, fire detection), K1–K10 signalling, telecom & AFC, L1–L13 other incidents. Full wording in `frontend/src/modules/registers/data/masters.ts`. (The Incident Sub-Class master page only holds one "NA" row per class; the real list comes from the form.)
+- **Essential items** (/items, 20, all Weekly): Raincoat, Hand tally counter, Checking of emergency contact numbers available in SWO, Queue manager, Point clamp, Pad lock, Crank handle, Rubber gloves, First aid kit, Megaphone, Tri colour torch, Umbrella, High visibility vest, 33 KV gloves, Safety helmet, Gum boots, Shroud, Stretcher, Wheel chair, Hand flag.
+- **Local Traffic Regulation**: Operating system OC-500 / OC-111 / Both; Control status OC – Offer Control / TC – Take Control / Enforce Take Control.
+- **Key Register**: Company = CMRL + EPIC organisations (A1 Global FM, ABS Fujitsu, ALSTOM, ALSTOM-UDS, Blue Star, BSNL, …); status Issued / Returned.
+- **Parking (Long Halt)**: vehicle types Two-Wheeler, E-Two-Wheeler, Three-Wheeler, Four-Wheeler, E-Four-Wheeler, Six-Wheeler; status Entry / Exited.
+- **PD Management**: location Concourse / Platform / Street / Other; penalty Yes / No.
+- **Mock Drill**: type Event / Mock Drill / Pep Talk; department = the 20 departments.

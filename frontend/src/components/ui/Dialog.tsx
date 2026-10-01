@@ -31,12 +31,14 @@ export function Dialog({ open, onClose, children, ...props }: DialogProps) {
   return (
     <dialog
       ref={ref}
+      // React passes a nested dialog's cancel/close up the component tree; only handle this dialog's own.
       onCancel={(event) => {
+        if (event.target !== event.currentTarget) return
         event.preventDefault()
         onClose()
       }}
-      onClose={() => {
-        if (open) onClose()
+      onClose={(event) => {
+        if (event.target === event.currentTarget && open) onClose()
       }}
       onClick={handleClick}
       {...props}

@@ -376,6 +376,18 @@
       transform: translateX(-100%);
     }
   }
+  /* The same drawer from the right edge (register record details) */
+  .odms-drawer.odms-drawer-end {
+    transform: translateX(100%);
+  }
+  .odms-drawer.odms-drawer-end[open] {
+    transform: none;
+  }
+  @starting-style {
+    .odms-drawer.odms-drawer-end[open] {
+      transform: translateX(100%);
+    }
+  }
 
   /* Centered dialog (search) */
   .odms-dialog {

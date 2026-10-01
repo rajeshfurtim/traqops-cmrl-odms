@@ -27,7 +27,7 @@ src/
 │                   Card, Field (Input/Select/Textarea/Checkbox), SegmentedControl, Pagination
 ├── modules/        one folder per business module (pages, components, data, types)
 │   ├── station-diary/  Today, Shift Summary (table + booklet), handover, PDF export
-│   └── registers/      schema-driven registers (definitions.ts) with records and history
+│   └── registers/      config-driven registers (definitions.ts): form engine, workflow, official form view
 ├── constants/      navigation config, search scopes, breakpoints, mock data
 ├── context/        SessionContext (user/station/shift), ShellContext (layout state)
 ├── hooks/  pages/  types/  utils/
@@ -70,16 +70,39 @@ functions for writes). Replacing a store with HTTP calls doesn't change the UI. 
   To move PDF generation to the backend, replace the body of `pdf/downloadDiaryPdf.tsx`.
   PDF fonts come from the free `@fontsource/inter` package (SIL OFL, WOFF files); the ★ marker is drawn as a vector.
 
-**Registers** (`/registers`)
+**Registers** (`/registers`) — rebuilt from the old ODMS (discovery in `docs/register-analysis/`). Phase 1, station
+registers: **Incident** (R4), **Manual Point Operation** (F-32), **Local Traffic Regulation**, **Mock Drill / Events**
+(F-28), **Passenger Assistance** (F-33), **Essential Equipment** (weekly checklist), **Key Register**, **Parking (Long
+Halt)**, **Station PD Management**.
 
-- A register is configuration in `modules/registers/definitions.ts` (fields, reference code, retention). The table,
-  entry form and record panel are generated from it, so adding a register is a config change.
-- Status workflow Open → In progress → Pending verification → Closed; closing needs a remark; every change goes into history.
-- Diary entries on the open shift have **Create register entry**: pick the register, the form opens pre-filled, and the
-  record and entry link both ways.
-- Filters: status chips, search, and a **Raised from / to** date range.
-- **Export** (registers with `report` in their definition; first: Occurrence Log): Copy · CSV · Excel · PDF · Print
-  from the shared export component (below). Columns come from the register's fields plus Reference, Raised at/by and Status.
+- A register is configuration in `modules/registers/definitions.ts`: form sections and fields, list columns, filters,
+  summary tiles, reference format, official form number and an optional workflow. The home page, table, entry form,
+  record form view, print and export are generated from it.
+- Field types (`fields.ts`, `components/FieldInput.tsx`): text, number (with unit / ₹), date-time with **Now**, select
+  (static, from a master, or dependent like class → sub-class), choice chips, Yes/No that opens required details
+  (`when`), **PN** with Generate PN, counts grid (gender × entry/exit/interchange), timeline rows, photos, a
+  Working / Not working **checklist** (photo needed only for items not working), and **computed** values (time
+  taken across midnight, CHK from point no., days parked, licence status). Station, shift, date-time and "recorded by"
+  are filled in for the user.
+- Masters the forms pick from are in `data/masters.ts` (incident classes and 76 sub-classes, essential items, mock
+  drill scenarios, organisations and vehicle types from the old system; points, rooms and shops are demo data).
+- **Workflow** per register (optional): Key Register Issued → Returned, Parking Parked → Exited. Each step is a small
+  form (`ActionDialog`) whose values are stored on the record; other registers are logs ("Recorded").
+- Records are never deleted. The person who recorded an entry can **Correct entry**: it needs a reason, the earlier
+  values stay in `revisions` and the revision number shows on the form. Anyone can add remarks; everything goes into
+  history with date and time.
+- Home page: a **card grid** by category. Each card has the register's icon, form number, today's and total entries,
+  a warning line (keys not returned, vehicles still parked, weekly equipment check due / items not working) and
+  **New entry** straight to the form (`/registers/<id>?new=1`). Search finds a register by name, code or form number.
+- Register page: **full table + side drawer** (option B on the design canvas). Status pills with counts that
+  filter (e.g. Not returned 2), search, a **Filters** panel (status, register fields, date range) and export on one
+  line, then the full-width table. Clicking a row slides the entry in from the right (`RecordDrawer`, a native
+  `<dialog>`): Details or **Official form** (`RecordSheet`), history and remarks, with the workflow step, **Correct
+  entry** and **Print form** in its footer. Phones show a compact list instead of the table; the drawer is full width.
+- Diary entries on the open shift have **Create register entry**: pick the register, the form opens pre-filled (date
+  and time, title, details or first timeline row), and the record and entry link both ways.
+- **Export**: Copy · CSV · Excel · PDF · Print from the shared export component (below), with the register's list
+  columns plus Reference, Date & time, Recorded by and Status.
 
 **Shared export** (`src/export/`) — for every new register and module. Shift Summary and Station Diary keep their
 own export code on purpose; don't migrate them.
